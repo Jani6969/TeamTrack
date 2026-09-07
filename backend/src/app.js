@@ -17,7 +17,14 @@ const app = express();
 // Enable Cross-Origin Resource Sharing (CORS) for frontend
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (curl/Postman) or any localhost port
+      if (!origin || origin.startsWith('http://localhost:') || origin === process.env.CLIENT_URL) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true
   })
 );
