@@ -756,7 +756,7 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
           rows={3}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Demo URL: https://staging.workpulse.internal/demo&#10;Figma: https://figma.com/file/..."
+          placeholder="Demo URL: https://staging.teamtrack.internal/demo&#10;Figma: https://figma.com/file/..."
           className="w-full p-3.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
         />
       </div>

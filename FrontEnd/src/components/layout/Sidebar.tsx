@@ -65,7 +65,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             <Activity className="w-5 h-5" />
           </div>
           <div>
-            <div className="font-extrabold text-base tracking-tight text-white leading-tight">WorkPulse</div>
+            <div className="font-extrabold text-base tracking-tight text-white leading-tight">TeamTrack</div>
             <div className="text-[10px] uppercase font-semibold tracking-wider text-slate-400">Team Analytics</div>
           </div>
         </div>

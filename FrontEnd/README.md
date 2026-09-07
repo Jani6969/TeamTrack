@@ -1,6 +1,6 @@
-# WorkPulse – Weekly Team Reporting & Analytics Platform (Frontend)
+# TeamTrack – Weekly Team Reporting & Analytics Platform (Frontend)
 
-WorkPulse is an enterprise-grade weekly team reporting, managerial review, and engineering analytics platform built with **Next.js (App Router)**, **React**, **TypeScript**, **Tailwind CSS**, and **Recharts**.
+TeamTrack is an enterprise-grade weekly team reporting, managerial review, and engineering analytics platform built with **Next.js (App Router)**, **React**, **TypeScript**, **Tailwind CSS**, and **Recharts**.
 
 It interfaces directly with the Node.js/Express/MongoDB REST API backend to deliver a seamless SaaS workflow for engineers, team leads, and managers.
 

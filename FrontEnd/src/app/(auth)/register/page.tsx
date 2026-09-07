@@ -45,7 +45,7 @@ export default function RegisterPage() {
         password: password.trim(),
         role,
       });
-      toastSuccess('Account created successfully! Welcome to WorkPulse.');
+      toastSuccess('Account created successfully! Welcome to TeamTrack.');
     } catch (err: any) {
       setErrorMessage(err.message || 'Registration failed.');
       toastError(err.message || 'Registration failed');
@@ -69,7 +69,7 @@ export default function RegisterPage() {
           Create Account
         </h2>
         <p className="mt-2 text-center text-sm text-slate-400">
-          Join WorkPulse to begin tracking team goals and deliverables
+          Join TeamTrack to begin tracking team goals and deliverables
         </p>
       </div>
 

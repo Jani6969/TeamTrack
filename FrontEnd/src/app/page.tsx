@@ -28,7 +28,7 @@ export default function RootPage() {
           <Activity className="w-6 h-6" />
         </div>
         <div className="text-center">
-          <h2 className="text-xl font-bold">WorkPulse</h2>
+          <h2 className="text-xl font-bold">TeamTrack</h2>
           <p className="text-xs text-slate-400 mt-1">Weekly Team Reporting & Analytics Platform</p>
         </div>
       </div>

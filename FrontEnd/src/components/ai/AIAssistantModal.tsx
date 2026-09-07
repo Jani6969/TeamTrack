@@ -15,7 +15,7 @@ export function AIAssistantModal() {
     {
       role: 'assistant',
       content:
-        'Hello! I am your **WorkPulse AI Copilot**. How can I help you with your weekly reporting, sprint achievements, blockers, or dashboard metrics today?',
+        'Hello! I am your **TeamTrack AI Copilot**. How can I help you with your weekly reporting, sprint achievements, blockers, or dashboard metrics today?',
     },
   ]);
   const [isTyping, setIsTyping] = useState(false);
@@ -53,7 +53,7 @@ export function AIAssistantModal() {
         botResponse =
           'Reports in **SUBMITTED** status are currently awaiting manager approval. Check your **/manager/dashboard** overview to review pending items.';
       } else {
-        botResponse = `Thanks for asking: "${query}". WorkPulse provides weekly task tracking, task % completions, hours categorization (dev, testing, meetings, docs), and managerial reviews with approval workflows.`;
+        botResponse = `Thanks for asking: "${query}". TeamTrack provides weekly task tracking, task % completions, hours categorization (dev, testing, meetings, docs), and managerial reviews with approval workflows.`;
       }
 
       setMessages([...newMessages, { role: 'assistant', content: botResponse }]);
@@ -67,10 +67,10 @@ export function AIAssistantModal() {
       <button
         onClick={() => setIsOpen(true)}
         className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5 px-4 py-3 rounded-full bg-gradient-to-r from-brand-600 to-indigo-600 text-white font-semibold text-sm shadow-xl shadow-brand-500/30 hover:shadow-brand-500/50 hover:scale-105 active:scale-95 transition-all"
-        title="Ask WorkPulse AI"
+        title="Ask TeamTrack AI"
       >
         <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
-        <span>Ask WorkPulse AI</span>
+        <span>Ask TeamTrack AI</span>
       </button>
 
       {/* Floating Chat Drawer */}
@@ -83,7 +83,7 @@ export function AIAssistantModal() {
                 <Bot className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-sm font-bold leading-tight">WorkPulse Copilot</h4>
+                <h4 className="text-sm font-bold leading-tight">TeamTrack Copilot</h4>
                 <p className="text-[11px] text-slate-400">Team Intelligence Assistant</p>
               </div>
             </div>

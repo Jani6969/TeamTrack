@@ -58,7 +58,7 @@ export default function LoginPage() {
         </div>
 
         <h2 className="text-center text-3xl font-extrabold tracking-tight text-white">
-          WorkPulse
+          TeamTrack
         </h2>
         <p className="mt-2 text-center text-sm text-slate-400">
           Weekly Team Reporting & Analytics Platform

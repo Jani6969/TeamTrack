@@ -7,7 +7,7 @@ import { ToastProvider } from '@/context/ToastContext';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'WorkPulse – Weekly Team Reporting & Analytics Platform',
+  title: 'TeamTrack – Weekly Team Reporting & Analytics Platform',
   description: 'Enterprise weekly status reporting, managerial reviews, and team productivity analytics.',
 };
 
