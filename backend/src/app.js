@@ -8,6 +8,7 @@ const projectRoutes = require('./routes/projectRoutes');
 const reportRouter = require('./routes/reportRoutes');
 const { managerReportRouter } = require('./routes/reportRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const aiRoutes = require('./routes/aiRoutes');
 
 // Middleware imports
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
@@ -48,6 +49,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/reports', reportRouter);
 app.use('/api/manager/reports', managerReportRouter);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Catch-all 404 handler for undefined endpoints
 app.use(notFound);

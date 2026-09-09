@@ -39,6 +39,7 @@ import {
   Users,
   Activity,
   RefreshCw,
+  Sparkles,
 } from 'lucide-react';
 
 export default function ManagerDashboardPage() {
@@ -169,6 +170,32 @@ export default function ManagerDashboardPage() {
             />
           </>
         )}
+      </div>
+
+      {/* AI Team Intelligence Assistant Quick Banner */}
+      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-purple-950 rounded-2xl p-5 mb-8 text-white shadow-lg border border-indigo-800/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="flex items-start sm:items-center gap-3.5">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-500 via-indigo-500 to-purple-500 flex items-center justify-center text-white shrink-0 shadow-md shadow-brand-500/20">
+            <Sparkles className="w-6 h-6 text-amber-300 animate-pulse" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-base font-bold tracking-tight">TeamTrack AI Copilot & Executive Intelligence</h3>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-brand-500/30 text-brand-300 border border-brand-400/30">
+                Gemini 3.6 Flash
+              </span>
+            </div>
+            <p className="text-xs text-slate-300 mt-0.5 max-w-2xl">
+              Ask questions about sprint accomplishments, query developer blockers in real time, or generate an automated capacity and risk assessment.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-[11px] text-slate-400 hidden lg:inline">
+            Click floating button on bottom-right or ask directly ↘
+          </span>
+        </div>
       </div>
 
       {/* 2. Charts Section (Prompt Section 15) */}

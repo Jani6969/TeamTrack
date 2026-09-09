@@ -19,27 +19,70 @@ describe('Role-Based Access Control (RBAC) & Ownership Tests', () => {
   let member2ReportId;
 
   beforeAll(async () => {
-    // Connect to database for tests
     const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/weekly-report-system';
     if (mongoose.connection.readyState === 0) {
       await mongoose.connect(mongoUri);
     }
 
-    // Retrieve seeded manager and members
-    const manager = await User.findOne({ email: 'manager@example.com' });
-    const member1 = await User.findOne({ email: 'member1@example.com' });
-    const member2 = await User.findOne({ email: 'member2@example.com' });
+    let manager = await User.findOne({ email: 'manager@example.com' });
+    let member1 = await User.findOne({ email: 'member1@example.com' });
+    let member2 = await User.findOne({ email: 'member2@example.com' });
+
+    if (!manager) {
+      manager = await User.create({
+        name: 'Sarah Connor',
+        email: 'manager@example.com',
+        password: 'Password123',
+        role: 'MANAGER'
+      });
+    }
+
+    if (!member1) {
+      member1 = await User.create({
+        name: 'Alex Johnson',
+        email: 'member1@example.com',
+        password: 'Password123',
+        role: 'TEAM_MEMBER'
+      });
+    }
+
+    if (!member2) {
+      member2 = await User.create({
+        name: 'Beth Smith',
+        email: 'member2@example.com',
+        password: 'Password123',
+        role: 'TEAM_MEMBER'
+      });
+    }
 
     managerToken = generateToken(manager);
     member1Token = generateToken(member1);
     member2Token = generateToken(member2);
 
-    // Find a report owned by member 1
-    const report1 = await Report.findOne({ user: member1._id });
+    let report1 = await Report.findOne({ user: member1._id });
+    if (!report1) {
+      let project = await Project.findOne();
+      if (!project) project = await Project.create({ name: 'Test Project' });
+      report1 = await Report.create({
+        user: member1._id,
+        project: project._id,
+        weekStart: new Date(),
+        weekEnd: new Date()
+      });
+    }
     member1ReportId = report1._id.toString();
 
-    // Find a report owned by member 2
-    const report2 = await Report.findOne({ user: member2._id });
+    let report2 = await Report.findOne({ user: member2._id });
+    if (!report2) {
+      let project = await Project.findOne();
+      if (!project) project = await Project.create({ name: 'Test Project' });
+      report2 = await Report.create({
+        user: member2._id,
+        project: project._id,
+        weekStart: new Date(),
+        weekEnd: new Date()
+      });
+    }
     member2ReportId = report2._id.toString();
   });
 

@@ -53,8 +53,8 @@ export default function ManagerReportsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const limit = 10;
 
-  // Active view: reports list or reminders
-  const [activeTab, setActiveTab] = useState<'REPORTS' | 'REMINDERS'>('REPORTS');
+  // Active view: reports list or reminders / not started
+  const [activeTab, setActiveTab] = useState<'REPORTS' | 'NOT_STARTED' | 'REMINDERS'>('REPORTS');
   const [sendingReminder, setSendingReminder] = useState<string | null>(null);
 
   // Predefined week options for quick selection
@@ -215,10 +215,10 @@ export default function ManagerReportsPage() {
       });
   }, [teamMembers, submittedMemberIds, memberFilter, searchTerm]);
 
-  // When statusFilter is set to NOT_STARTED, auto-switch to not-started tab
+  // When statusFilter is set to NOT_STARTED, auto-switch to reminders tab
   useEffect(() => {
     if (statusFilter === 'NOT_STARTED') {
-      setActiveTab('NOT_STARTED');
+      setActiveTab('REMINDERS');
     }
   }, [statusFilter]);
 
