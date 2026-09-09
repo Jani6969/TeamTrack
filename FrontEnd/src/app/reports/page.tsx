@@ -143,7 +143,7 @@ export default function MyReportsPage() {
                     <th className="py-3.5 px-6">Status</th>
                     <th className="py-3.5 px-6">Tasks Logged</th>
                     <th className="py-3.5 px-6">Submitted / Updated</th>
-                    <th className="py-3.5 px-6 text-right">Actions</th>
+                    <th className="py-3.5 px-6 text-right whitespace-nowrap">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -169,11 +169,11 @@ export default function MyReportsPage() {
                         <td className="py-4 px-6 text-xs text-slate-500">
                           {formatDate(rep.submittedAt || rep.updatedAt || rep.createdAt)}
                         </td>
-                        <td className="py-4 px-6 text-right">
-                          <div className="flex items-center justify-end gap-2">
+                        <td className="py-3.5 px-6 text-right whitespace-nowrap">
+                          <div className="inline-flex items-center justify-end gap-2">
                             <Link
                               href={`/reports/${rep._id}`}
-                              className="px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition-colors"
+                              className="h-8 px-3 rounded-lg text-xs font-semibold inline-flex items-center justify-center whitespace-nowrap bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm transition-all"
                             >
                               View
                             </Link>
@@ -181,7 +181,7 @@ export default function MyReportsPage() {
                             {canEdit && (
                               <Link
                                 href={`/reports/${rep._id}/edit`}
-                                className="px-3 py-1 rounded-lg text-xs font-semibold bg-brand-50 text-brand-700 hover:bg-brand-100 transition-colors"
+                                className="h-8 px-3 rounded-lg text-xs font-semibold inline-flex items-center justify-center whitespace-nowrap bg-brand-600 hover:bg-brand-700 text-white shadow-sm shadow-brand-500/20 transition-all"
                               >
                                 {rep.status === 'NEEDS_CORRECTION' ? 'Resubmit' : 'Edit'}
                               </Link>

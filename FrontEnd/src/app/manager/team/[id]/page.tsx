@@ -166,7 +166,7 @@ export default function MemberProfilePage() {
                     <th className="py-3 px-6">Project</th>
                     <th className="py-3 px-6">Status</th>
                     <th className="py-3 px-6">Tasks</th>
-                    <th className="py-3 px-6 text-right">Actions</th>
+                    <th className="py-3 px-6 text-right whitespace-nowrap">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -184,13 +184,13 @@ export default function MemberProfilePage() {
                         <td className="py-3.5 px-6 text-xs text-slate-500">
                           {rep.tasks?.length || 0} tasks
                         </td>
-                        <td className="py-3.5 px-6 text-right">
+                        <td className="py-3.5 px-6 text-right whitespace-nowrap">
                           <Link
                             href={`/manager/reports/${rep._id}/review`}
-                            className="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold bg-brand-50 text-brand-700 hover:bg-brand-100 transition-colors"
+                            className="h-8 px-3 rounded-lg text-xs font-semibold inline-flex items-center justify-center whitespace-nowrap bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm gap-1.5 transition-all"
                           >
                             <span>Inspect</span>
-                            <ExternalLink className="w-3.5 h-3.5" />
+                            <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
                           </Link>
                         </td>
                       </tr>

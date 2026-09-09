@@ -125,7 +125,7 @@ export default function UsersManagementPage() {
                   <th className="py-3.5 px-6">Current Role</th>
                   <th className="py-3.5 px-6">Change Role</th>
                   <th className="py-3.5 px-6">Created Date</th>
-                  <th className="py-3.5 px-6 text-right">Actions</th>
+                  <th className="py-3.5 px-6 text-right whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -172,7 +172,7 @@ export default function UsersManagementPage() {
                           onChange={(e) =>
                             handleRoleChange(u._id, e.target.value as 'TEAM_MEMBER' | 'MANAGER')
                           }
-                          className="px-2.5 py-1 rounded-lg border border-slate-200 bg-white text-xs font-medium text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed"
+                          className="h-8 px-2.5 rounded-lg border border-slate-200 bg-white text-xs font-medium text-slate-700 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                           <option value="TEAM_MEMBER">Team Member</option>
                           <option value="MANAGER">Manager</option>
@@ -183,15 +183,15 @@ export default function UsersManagementPage() {
                         {formatDate(u.createdAt)}
                       </td>
 
-                      <td className="py-4 px-6 text-right">
+                      <td className="py-3.5 px-6 text-right whitespace-nowrap">
                         {!isSelf && (
                           <button
                             type="button"
                             onClick={() => setUserToDelete(u)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                            className="h-8 w-8 rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 inline-flex items-center justify-center transition-all shadow-sm shrink-0"
                             title="Delete User"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         )}
                       </td>

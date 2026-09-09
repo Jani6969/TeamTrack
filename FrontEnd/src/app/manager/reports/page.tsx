@@ -147,7 +147,7 @@ export default function ManagerReportsPage() {
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm min-w-[720px]">
+              <table className="w-full text-left text-sm min-w-[840px]">
                 <thead className="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-100">
                   <tr>
                     <th className="py-3.5 px-6">Team Member</th>
@@ -155,7 +155,7 @@ export default function ManagerReportsPage() {
                     <th className="py-3.5 px-6">Project</th>
                     <th className="py-3.5 px-6">Status</th>
                     <th className="py-3.5 px-6">Submitted Date</th>
-                    <th className="py-3.5 px-6 text-right">Actions</th>
+                    <th className="py-3.5 px-6 text-right whitespace-nowrap">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -187,22 +187,22 @@ export default function ManagerReportsPage() {
                         <td className="py-4 px-6 text-xs text-slate-500">
                           {formatDate(rep.submittedAt || rep.createdAt)}
                         </td>
-                        <td className="py-4 px-6 text-right">
-                          <div className="flex items-center justify-end gap-2">
+                        <td className="py-3.5 px-6 text-right whitespace-nowrap">
+                          <div className="inline-flex items-center justify-end gap-2">
                             <Link
                               href={`/reports/${rep._id}`}
-                              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                              className="h-8 w-8 rounded-lg border border-slate-200 bg-white text-slate-500 hover:text-brand-600 hover:border-brand-200 hover:bg-brand-50 flex items-center justify-center transition-all shadow-sm shrink-0"
                               title="View Document"
                             >
-                              <ExternalLink className="w-4 h-4" />
+                              <ExternalLink className="w-3.5 h-3.5" />
                             </Link>
 
                             <Link
                               href={`/manager/reports/${rep._id}/review`}
-                              className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
+                              className={`h-8 px-3.5 rounded-lg text-xs font-semibold inline-flex items-center justify-center whitespace-nowrap transition-all shadow-sm ${
                                 rep.status === 'SUBMITTED'
-                                  ? 'bg-brand-600 hover:bg-brand-700 text-white shadow-sm'
-                                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                                  ? 'bg-brand-600 hover:bg-brand-700 text-white shadow-brand-500/20'
+                                  : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200'
                               }`}
                             >
                               {rep.status === 'SUBMITTED' ? 'Review Now' : 'Review Details'}

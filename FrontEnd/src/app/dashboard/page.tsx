@@ -180,7 +180,7 @@ export default function MemberDashboardPage() {
                   <th className="py-3.5 px-6">Status</th>
                   <th className="py-3.5 px-6">Tasks</th>
                   <th className="py-3.5 px-6">Updated</th>
-                  <th className="py-3.5 px-6 text-right">Actions</th>
+                  <th className="py-3.5 px-6 text-right whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -201,19 +201,19 @@ export default function MemberDashboardPage() {
                       <td className="py-4 px-6 text-xs text-slate-400">
                         {formatDate(rep.updatedAt || rep.createdAt)}
                       </td>
-                      <td className="py-4 px-6 text-right">
-                        <div className="flex items-center justify-end gap-2">
+                      <td className="py-3.5 px-6 text-right whitespace-nowrap">
+                        <div className="inline-flex items-center justify-end gap-2">
                           <Link
                             href={`/reports/${rep._id}`}
-                            className="p-1.5 rounded-lg text-slate-500 hover:text-brand-600 hover:bg-brand-50 transition-colors"
+                            className="h-8 w-8 rounded-lg border border-slate-200 bg-white text-slate-500 hover:text-brand-600 hover:border-brand-200 hover:bg-brand-50 flex items-center justify-center transition-all shadow-sm shrink-0"
                             title="View Report"
                           >
-                            <ExternalLink className="w-4 h-4" />
+                            <ExternalLink className="w-3.5 h-3.5" />
                           </Link>
                           {(rep.status === 'DRAFT' || rep.status === 'NEEDS_CORRECTION') && (
                             <Link
                               href={`/reports/${rep._id}/edit`}
-                              className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition-colors"
+                              className="h-8 px-3 rounded-lg text-xs font-semibold inline-flex items-center justify-center whitespace-nowrap bg-brand-600 hover:bg-brand-700 text-white shadow-sm shadow-brand-500/20 transition-all"
                             >
                               Edit
                             </Link>

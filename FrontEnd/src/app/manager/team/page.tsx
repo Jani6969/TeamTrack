@@ -53,7 +53,7 @@ export default function TeamDirectoryPage() {
                   <th className="py-3.5 px-6">Approved</th>
                   <th className="py-3.5 px-6">Pending</th>
                   <th className="py-3.5 px-6">Needs Correction</th>
-                  <th className="py-3.5 px-6 text-right">Actions</th>
+                  <th className="py-3.5 px-6 text-right whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -89,13 +89,13 @@ export default function TeamDirectoryPage() {
                         {m.needsCorrection}
                       </span>
                     </td>
-                    <td className="py-4 px-6 text-right">
+                    <td className="py-3.5 px-6 text-right whitespace-nowrap">
                       <Link
                         href={`/manager/team/${m.userId}`}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-brand-600 hover:bg-brand-50 transition-colors"
+                        className="h-8 px-3 rounded-lg text-xs font-semibold inline-flex items-center justify-center whitespace-nowrap bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm gap-1.5 transition-all"
                       >
                         <span>View Profile</span>
-                        <ChevronRight className="w-4 h-4" />
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
                       </Link>
                     </td>
                   </tr>
