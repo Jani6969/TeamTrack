@@ -118,7 +118,7 @@ export default function UsersManagementPage() {
           <div className="p-12 text-center text-slate-400 text-sm">No users found.</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-sm min-w-[650px]">
               <thead className="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-100">
                 <tr>
                   <th className="py-3.5 px-6">Employee</th>
@@ -137,7 +137,7 @@ export default function UsersManagementPage() {
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs shrink-0">
-                            {u.name.charAt(0)}
+                            {(u.name || 'User').charAt(0).toUpperCase()}
                           </div>
                           <div>
                             <div className="font-bold text-slate-900 flex items-center gap-2">

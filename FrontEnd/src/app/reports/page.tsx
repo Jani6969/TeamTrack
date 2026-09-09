@@ -55,7 +55,7 @@ export default function MyReportsPage() {
   const filteredReports = reports.filter((r) => {
     if (!searchTerm.trim()) return true;
     const term = searchTerm.toLowerCase();
-    const projName = typeof r.project === 'object' ? r.project?.name?.toLowerCase() : '';
+    const projName = (typeof r.project === 'object' && r.project?.name) ? r.project.name.toLowerCase() : '';
     const taskNames = r.tasks?.map((t) => t.taskName.toLowerCase()).join(' ') || '';
     return projName?.includes(term) || taskNames.includes(term) || r.notes?.toLowerCase().includes(term);
   });
@@ -135,7 +135,7 @@ export default function MyReportsPage() {
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-sm min-w-[700px]">
                 <thead className="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-100">
                   <tr>
                     <th className="py-3.5 px-6">Week Range</th>
@@ -148,7 +148,7 @@ export default function MyReportsPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-700">
                   {filteredReports.map((rep) => {
-                    const projectName = typeof rep.project === 'object' ? rep.project?.name : 'Project';
+                    const projectName = (typeof rep.project === 'object' && rep.project?.name) ? rep.project.name : (typeof rep.project === 'string' && rep.project ? rep.project : 'Project');
                     const canEdit = rep.status === 'DRAFT' || rep.status === 'NEEDS_CORRECTION';
 
                     return (

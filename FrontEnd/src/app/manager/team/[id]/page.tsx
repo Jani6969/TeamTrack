@@ -80,7 +80,7 @@ export default function MemberProfilePage() {
         <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-500 text-white flex items-center justify-center font-extrabold text-2xl shadow-md shadow-brand-500/20">
-              {member?.name.charAt(0) || <UserIcon className="w-8 h-8" />}
+              {member?.name ? member.name.charAt(0).toUpperCase() : <UserIcon className="w-8 h-8" />}
             </div>
             <div>
               <h2 className="text-xl font-bold text-slate-900">{member?.name || 'Loading...'}</h2>
@@ -159,7 +159,7 @@ export default function MemberProfilePage() {
             <div className="p-12 text-center text-slate-400 text-sm">No reports on record.</div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-sm min-w-[600px]">
                 <thead className="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-100">
                   <tr>
                     <th className="py-3 px-6">Week Range</th>
@@ -171,7 +171,7 @@ export default function MemberProfilePage() {
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-700">
                   {reports.map((rep) => {
-                    const projName = typeof rep.project === 'object' ? rep.project?.name : 'Project';
+                    const projName = (typeof rep.project === 'object' && rep.project?.name) ? rep.project.name : (typeof rep.project === 'string' && rep.project ? rep.project : 'Project');
                     return (
                       <tr key={rep._id} className="hover:bg-slate-50/80">
                         <td className="py-3.5 px-6 font-semibold text-slate-900">

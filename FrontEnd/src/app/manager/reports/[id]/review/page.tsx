@@ -133,9 +133,9 @@ export default function ManagerReviewPage() {
     );
   }
 
-  const memberName = typeof report.user === 'object' ? report.user?.name : 'Team Member';
-  const memberEmail = typeof report.user === 'object' ? report.user?.email : '';
-  const projName = typeof report.project === 'object' ? report.project?.name : 'Project';
+  const memberName = (typeof report.user === 'object' && report.user?.name) ? report.user.name : (typeof report.user === 'string' && report.user ? report.user : 'Team Member');
+  const memberEmail = (typeof report.user === 'object' && report.user?.email) ? report.user.email : '';
+  const projName = (typeof report.project === 'object' && report.project?.name) ? report.project.name : (typeof report.project === 'string' && report.project ? report.project : 'Project');
 
   const totalHours =
     (report.hoursWorked?.development || 0) +
@@ -238,7 +238,7 @@ export default function ManagerReviewPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
             {canReview && (
               <>
                 <button

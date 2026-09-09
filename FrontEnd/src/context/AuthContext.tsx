@@ -30,19 +30,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const initAuth = async () => {
       try {
         const storedToken = localStorage.getItem('token');
+        const storedUser = localStorage.getItem('user');
+
         if (storedToken) {
           setToken(storedToken);
-          // Try loading user profile
-          const profile = await authService.getMe();
-          setUser(profile);
-          localStorage.setItem('user', JSON.stringify(profile));
+          if (storedUser) {
+            try {
+              setUser(JSON.parse(storedUser));
+            } catch {
+              // ignore JSON parse error
+            }
+          }
+
+          // Verify with backend
+          try {
+            const profile = await authService.getMe();
+            setUser(profile);
+            localStorage.setItem('user', JSON.stringify(profile));
+          } catch (apiErr) {
+            console.warn('Auth token invalid or expired, clearing session', apiErr);
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            setToken(null);
+            setUser(null);
+          }
         }
       } catch (err) {
-        console.warn('Auth token invalid or expired, clearing session', err);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        setToken(null);
-        setUser(null);
+        console.warn('Failed to read auth state from localStorage:', err);
       } finally {
         setIsLoading(false);
       }

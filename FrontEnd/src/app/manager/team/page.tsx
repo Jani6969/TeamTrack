@@ -45,7 +45,7 @@ export default function TeamDirectoryPage() {
           <div className="p-12 text-center text-slate-400 text-sm">No team members found.</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-sm min-w-[650px]">
               <thead className="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-100">
                 <tr>
                   <th className="py-3.5 px-6">Member Name</th>
@@ -62,7 +62,7 @@ export default function TeamDirectoryPage() {
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-xs">
-                          {m.name.charAt(0)}
+                          {(m.name || 'User').charAt(0).toUpperCase()}
                         </div>
                         <div>
                           <div className="font-bold text-slate-900">{m.name}</div>

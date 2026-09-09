@@ -62,9 +62,9 @@ export default function ManagerReportsPage() {
   const filteredReports = reports.filter((r) => {
     if (!searchTerm.trim()) return true;
     const term = searchTerm.toLowerCase();
-    const userName = typeof r.user === 'object' ? r.user?.name?.toLowerCase() : '';
-    const userEmail = typeof r.user === 'object' ? r.user?.email?.toLowerCase() : '';
-    const projName = typeof r.project === 'object' ? r.project?.name?.toLowerCase() : '';
+    const userName = (typeof r.user === 'object' && r.user?.name) ? r.user.name.toLowerCase() : '';
+    const userEmail = (typeof r.user === 'object' && r.user?.email) ? r.user.email.toLowerCase() : '';
+    const projName = (typeof r.project === 'object' && r.project?.name) ? r.project.name.toLowerCase() : '';
     return userName?.includes(term) || userEmail?.includes(term) || projName?.includes(term);
   });
 
@@ -147,7 +147,7 @@ export default function ManagerReportsPage() {
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-sm min-w-[720px]">
                 <thead className="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-100">
                   <tr>
                     <th className="py-3.5 px-6">Team Member</th>
@@ -160,16 +160,16 @@ export default function ManagerReportsPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-700">
                   {filteredReports.map((rep) => {
-                    const memberName = typeof rep.user === 'object' ? rep.user?.name : 'Team Member';
-                    const memberEmail = typeof rep.user === 'object' ? rep.user?.email : '';
-                    const projName = typeof rep.project === 'object' ? rep.project?.name : 'Project';
+                    const memberName = (typeof rep.user === 'object' && rep.user?.name) ? rep.user.name : (typeof rep.user === 'string' && rep.user ? rep.user : 'Team Member');
+                    const memberEmail = (typeof rep.user === 'object' && rep.user?.email) ? rep.user.email : '';
+                    const projName = (typeof rep.project === 'object' && rep.project?.name) ? rep.project.name : (typeof rep.project === 'string' && rep.project ? rep.project : 'Project');
 
                     return (
                       <tr key={rep._id} className="hover:bg-slate-50/80 transition-colors">
                         <td className="py-4 px-6">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center text-xs font-bold shrink-0">
-                              {memberName.charAt(0)}
+                              {(memberName || 'Team Member').charAt(0).toUpperCase()}
                             </div>
                             <div>
                               <div className="font-bold text-slate-900">{memberName}</div>

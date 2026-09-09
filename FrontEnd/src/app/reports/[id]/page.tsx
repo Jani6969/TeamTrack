@@ -90,9 +90,9 @@ export default function ReportDetailPage() {
     );
   }
 
-  const employeeName = typeof report.user === 'object' ? report.user?.name : 'Team Member';
-  const employeeEmail = typeof report.user === 'object' ? report.user?.email : '';
-  const projectName = typeof report.project === 'object' ? report.project?.name : 'Project';
+  const employeeName = (typeof report.user === 'object' && report.user?.name) ? report.user.name : (typeof report.user === 'string' && report.user ? report.user : 'Team Member');
+  const employeeEmail = (typeof report.user === 'object' && report.user?.email) ? report.user.email : '';
+  const projectName = (typeof report.project === 'object' && report.project?.name) ? report.project.name : (typeof report.project === 'string' && report.project ? report.project : 'Project');
 
   const canEdit = report.status === 'DRAFT' || report.status === 'NEEDS_CORRECTION';
 
@@ -189,10 +189,10 @@ export default function ReportDetailPage() {
               </p>
             </div>
 
-            <div className="flex sm:flex-col items-end gap-1.5 sm:text-right border-t sm:border-t-0 pt-4 sm:pt-0 border-slate-800">
+            <div className="flex flex-col items-start sm:items-end gap-1.5 sm:text-right border-t sm:border-t-0 pt-4 sm:pt-0 border-slate-800">
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-full bg-brand-500/20 text-brand-300 flex items-center justify-center text-xs font-bold">
-                  {employeeName.charAt(0)}
+                  {(employeeName || 'Team Member').charAt(0).toUpperCase()}
                 </div>
                 <span className="font-semibold text-sm text-white">{employeeName}</span>
               </div>
