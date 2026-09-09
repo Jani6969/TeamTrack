@@ -29,12 +29,14 @@ import {
 } from 'lucide-react';
 
 export default function ManagerReportsPage() {
-  const { success: toastSuccess, info: toastInfo } = useToast();
+  const { success: toastSuccess, info: toastInfo, error: toastError } = useToast();
 
   const [reports, setReports] = useState<Report[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [teamMembers, setTeamMembers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const todayStr = useMemo(() => new Date().toISOString().split('T')[0], []);
 
   // Filters
   const [statusFilter, setStatusFilter] = useState('');
@@ -51,8 +53,9 @@ export default function ManagerReportsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const limit = 10;
 
-  // View tabs: 'REPORTS' or 'NOT_STARTED'
-  const [activeTab, setActiveTab] = useState<'REPORTS' | 'NOT_STARTED'>('REPORTS');
+  // Active view: reports list or reminders
+  const [activeTab, setActiveTab] = useState<'REPORTS' | 'REMINDERS'>('REPORTS');
+  const [sendingReminder, setSendingReminder] = useState<string | null>(null);
 
   // Predefined week options for quick selection
   const weekOptions = useMemo(() => {
@@ -117,8 +120,37 @@ export default function ManagerReportsPage() {
     } else {
       const b = getWeekBoundaries(Number(weekId));
       setStartDate(b.weekStart);
-      setEndDate(b.weekEnd);
+      const cappedEnd = b.weekEnd > todayStr ? todayStr : b.weekEnd;
+      setEndDate(cappedEnd);
     }
+  };
+
+  const handleStartDateChange = (val: string) => {
+    if (val && val > todayStr) {
+      toastError('Future dates cannot be selected');
+      return;
+    }
+    if (val && endDate && val > endDate) {
+      toastError('Start date cannot be after end date');
+      return;
+    }
+    setStartDate(val);
+    setSelectedWeek('CUSTOM');
+    setPage(1);
+  };
+
+  const handleEndDateChange = (val: string) => {
+    if (val && val > todayStr) {
+      toastError('Future dates cannot be selected');
+      return;
+    }
+    if (val && startDate && val < startDate) {
+      toastError('End date cannot be before start date');
+      return;
+    }
+    setEndDate(val);
+    setSelectedWeek('CUSTOM');
+    setPage(1);
   };
 
   // Reset all filters
@@ -320,11 +352,8 @@ export default function ManagerReportsPage() {
               <input
                 type="date"
                 value={startDate}
-                onChange={(e) => {
-                  setStartDate(e.target.value);
-                  setSelectedWeek('CUSTOM');
-                  setPage(1);
-                }}
+                max={endDate || todayStr}
+                onChange={(e) => handleStartDateChange(e.target.value)}
                 className="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
                 title="Filter by Week Start Date"
               />
@@ -333,11 +362,9 @@ export default function ManagerReportsPage() {
               <input
                 type="date"
                 value={endDate}
-                onChange={(e) => {
-                  setEndDate(e.target.value);
-                  setSelectedWeek('CUSTOM');
-                  setPage(1);
-                }}
+                min={startDate || undefined}
+                max={todayStr}
+                onChange={(e) => handleEndDateChange(e.target.value)}
                 className="px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
                 title="Filter by Week End Date"
               />
