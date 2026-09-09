@@ -1,13 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { projectService } from '@/services/projectService';
 import { reportService, ReportPayload } from '@/services/reportService';
 import { Project, Report, TaskItem, TaskPriority, TaskStatus } from '@/types';
 import { useToast } from '@/context/ToastContext';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
-import { getWeekBoundaries } from '@/lib/utils';
 import {
   Calendar,
   FolderKanban,
@@ -15,6 +14,7 @@ import {
   Plus,
   Trash2,
   AlertTriangle,
+  AlertCircle,
   Award,
   Clock,
   FileText,
@@ -35,29 +35,31 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
   const [projects, setProjects] = useState<Project[]>([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
 
-  // Default dates
-  const defaultBoundaries = getWeekBoundaries(0);
+  const todayStr = useMemo(() => new Date().toISOString().split('T')[0], []);
 
-  // Section 1: Week
+  // Validation errors
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Section 1: Week (Blank by default for new reports)
   const [weekStart, setWeekStart] = useState<string>(
     initialData?.weekStart
       ? new Date(initialData.weekStart).toISOString().split('T')[0]
-      : defaultBoundaries.weekStart
+      : ''
   );
   const [weekEnd, setWeekEnd] = useState<string>(
     initialData?.weekEnd
       ? new Date(initialData.weekEnd).toISOString().split('T')[0]
-      : defaultBoundaries.weekEnd
+      : ''
   );
 
-  // Section 2: Project
+  // Section 2: Project (Blank by default for new reports)
   const [projectId, setProjectId] = useState<string>(
     typeof initialData?.project === 'object'
       ? initialData.project._id
       : initialData?.project || ''
   );
 
-  // Section 3: Tasks
+  // Section 3: Tasks (Blank by default for new reports)
   const [tasks, setTasks] = useState<TaskItem[]>(
     initialData?.tasks && initialData.tasks.length > 0
       ? initialData.tasks
@@ -65,11 +67,11 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
           {
             taskName: '',
             priority: 'MEDIUM',
-            plannedPercentage: 100,
-            actualPercentage: 100,
-            status: 'COMPLETED',
-            plannedHours: 8,
-            actualHours: 8,
+            plannedPercentage: 0,
+            actualPercentage: 0,
+            status: 'IN_PROGRESS',
+            plannedHours: 0,
+            actualHours: 0,
             deliverable: '',
           },
         ]
@@ -104,13 +106,13 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
     return idx >= 0 ? idx : 0;
   });
 
-  // Section 7: Hours Worked
+  // Section 7: Hours Worked (Defaults to 0 for new reports)
   const [hours, setHours] = useState({
-    development: initialData?.hoursWorked?.development || 20,
-    testing: initialData?.hoursWorked?.testing || 5,
-    meetings: initialData?.hoursWorked?.meetings || 5,
-    documentation: initialData?.hoursWorked?.documentation || 2,
-    other: initialData?.hoursWorked?.other || 0,
+    development: initialData?.hoursWorked?.development ?? 0,
+    testing: initialData?.hoursWorked?.testing ?? 0,
+    meetings: initialData?.hoursWorked?.meetings ?? 0,
+    documentation: initialData?.hoursWorked?.documentation ?? 0,
+    other: initialData?.hoursWorked?.other ?? 0,
   });
 
   // Section 8: Notes & Useful Links
@@ -126,8 +128,12 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
       try {
         const projs = await projectService.getProjects();
         setProjects(projs);
-        if (!projectId && projs.length > 0) {
-          setProjectId(projs[0]._id);
+        if (initialData?.project) {
+          const id =
+            typeof initialData.project === 'object'
+              ? initialData.project._id
+              : initialData.project;
+          setProjectId(id);
         }
       } catch (err) {
         console.error('Failed to load projects:', err);
@@ -137,7 +143,59 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
       }
     };
     fetchProjects();
-  }, [projectId, toastError]);
+  }, [initialData, toastError]);
+
+  // Date change handlers with validation
+  const handleWeekStartChange = (val: string) => {
+    if (val && val > todayStr) {
+      toastError('Future dates cannot be selected');
+      setErrors((prev) => ({ ...prev, weekStart: 'Future dates cannot be selected' }));
+      return;
+    }
+    if (val && weekEnd && val > weekEnd) {
+      toastError('Start date cannot be after end date');
+      setErrors((prev) => ({ ...prev, weekStart: 'Start date cannot be after end date' }));
+      return;
+    }
+    setWeekStart(val);
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next.weekStart;
+      if (next.weekEnd === 'End date cannot be earlier than start date') delete next.weekEnd;
+      return next;
+    });
+  };
+
+  const handleWeekEndChange = (val: string) => {
+    if (val && val > todayStr) {
+      toastError('Future dates cannot be selected');
+      setErrors((prev) => ({ ...prev, weekEnd: 'Future dates cannot be selected' }));
+      return;
+    }
+    if (val && weekStart && val < weekStart) {
+      toastError('End date cannot be before start date');
+      setErrors((prev) => ({ ...prev, weekEnd: 'End date cannot be earlier than start date' }));
+      return;
+    }
+    setWeekEnd(val);
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next.weekEnd;
+      if (next.weekStart === 'Start date cannot be after end date') delete next.weekStart;
+      return next;
+    });
+  };
+
+  const handleProjectChange = (val: string) => {
+    setProjectId(val);
+    if (val) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next.projectId;
+        return next;
+      });
+    }
+  };
 
   // Task helpers
   const handleAddTask = () => {
@@ -146,10 +204,10 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
       {
         taskName: '',
         priority: 'MEDIUM',
-        plannedPercentage: 100,
+        plannedPercentage: 0,
         actualPercentage: 0,
         status: 'IN_PROGRESS',
-        plannedHours: 4,
+        plannedHours: 0,
         actualHours: 0,
         deliverable: '',
       },
@@ -170,6 +228,11 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
       return;
     }
     setTasks((prev) => prev.filter((_, i) => i !== index));
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next[`task_${index}`];
+      return next;
+    });
   };
 
   // Blocker helpers
@@ -209,22 +272,78 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
     };
   };
 
-  const validateBasic = () => {
+  // Frontend validation
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    if (!weekStart) {
+      newErrors.weekStart = 'Week start date is required';
+    } else if (weekStart > todayStr) {
+      newErrors.weekStart = 'Future dates cannot be selected';
+    }
+
+    if (!weekEnd) {
+      newErrors.weekEnd = 'Week end date is required';
+    } else if (weekEnd > todayStr) {
+      newErrors.weekEnd = 'Future dates cannot be selected';
+    } else if (weekStart && weekEnd < weekStart) {
+      newErrors.weekEnd = 'End date cannot be earlier than start date';
+    }
+
     if (!projectId) {
-      toastError('Please select a project');
+      newErrors.projectId = 'Please select an active project';
+    }
+
+    if (tasks.length === 0) {
+      newErrors.tasks = 'At least one task is required';
+    } else {
+      let hasEmptyTask = false;
+      tasks.forEach((t, i) => {
+        if (!t.taskName.trim()) {
+          newErrors[`task_${i}`] = 'Task name is required';
+          hasEmptyTask = true;
+        }
+        if (t.plannedPercentage < 0 || t.plannedPercentage > 100) {
+          newErrors[`task_plan_pct_${i}`] = 'Must be 0-100%';
+        }
+        if (t.actualPercentage < 0 || t.actualPercentage > 100) {
+          newErrors[`task_act_pct_${i}`] = 'Must be 0-100%';
+        }
+        if (t.plannedHours < 0) {
+          newErrors[`task_plan_hrs_${i}`] = 'Hours must be ≥ 0';
+        }
+        if (t.actualHours < 0) {
+          newErrors[`task_act_hrs_${i}`] = 'Hours must be ≥ 0';
+        }
+      });
+      if (hasEmptyTask) {
+        newErrors.tasks = 'Please provide a task name for all tasks';
+      }
+    }
+
+    Object.entries(hours).forEach(([key, val]) => {
+      if (Number(val) < 0) {
+        newErrors[`hours_${key}`] = 'Hours cannot be negative';
+      }
+    });
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      const firstError = Object.values(newErrors)[0];
+      toastError(firstError, 'Validation Required');
+      if (typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
       return false;
     }
-    const validTasks = tasks.filter((t) => t.taskName.trim().length > 0);
-    if (validTasks.length === 0) {
-      toastError('Please add at least one named task to the tasks table');
-      return false;
-    }
+
     return true;
   };
 
   // 1. Save as Draft
   const handleSaveDraft = async () => {
-    if (!validateBasic()) return;
+    if (!validateForm()) return;
 
     setSubmittingDraft(true);
     try {
@@ -245,10 +364,16 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
     }
   };
 
-  // 2. Final Submit / Resubmit
+  // 2. Initiate Submit (checks validation before dialog)
+  const handleInitiateSubmit = () => {
+    if (!validateForm()) return;
+    setShowConfirmSubmit(true);
+  };
+
+  // 3. Final Submit / Resubmit
   const handleConfirmSubmit = async () => {
     setShowConfirmSubmit(false);
-    if (!validateBasic()) return;
+    if (!validateForm()) return;
 
     setSubmittingFinal(true);
     try {
@@ -298,6 +423,26 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
         confirmText="Yes, Submit Report"
       />
 
+      {/* Top Validation Error Banner */}
+      {Object.keys(errors).length > 0 && (
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 shadow-sm animate-slide-down flex items-start gap-3.5">
+          <div className="p-2 rounded-xl bg-rose-100 text-rose-600 shrink-0 mt-0.5">
+            <AlertCircle className="w-5 h-5" />
+          </div>
+          <div className="flex-1 text-xs sm:text-sm">
+            <div className="font-bold text-rose-950 text-sm mb-1">
+              Please complete all required fields before proceeding:
+            </div>
+            <ul className="list-disc list-inside space-y-0.5 text-rose-700 font-medium">
+              {errors.weekStart && <li>{errors.weekStart}</li>}
+              {errors.weekEnd && <li>{errors.weekEnd}</li>}
+              {errors.projectId && <li>{errors.projectId}</li>}
+              {errors.tasks && <li>{errors.tasks}</li>}
+            </ul>
+          </div>
+        </div>
+      )}
+
       {/* SECTION 1: Week Dates */}
       <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200 shadow-sm">
         <div className="flex items-center gap-2.5 pb-4 mb-5 border-b border-slate-100">
@@ -313,27 +458,50 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-              Week Start Date
+              Week Start Date <span className="text-rose-500">*</span>
             </label>
             <input
               type="date"
               required
               value={weekStart}
-              onChange={(e) => setWeekStart(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
+              max={weekEnd || todayStr}
+              onChange={(e) => handleWeekStartChange(e.target.value)}
+              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm focus:ring-2 transition-colors ${
+                errors.weekStart
+                  ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:ring-rose-500/20 focus:border-rose-500'
+                  : 'border-slate-200 focus:ring-brand-500/20 focus:border-brand-500'
+              }`}
             />
+            {errors.weekStart && (
+              <p className="text-xs text-rose-500 mt-1 font-medium flex items-center gap-1">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{errors.weekStart}</span>
+              </p>
+            )}
           </div>
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-              Week End Date
+              Week End Date <span className="text-rose-500">*</span>
             </label>
             <input
               type="date"
               required
               value={weekEnd}
-              onChange={(e) => setWeekEnd(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
+              min={weekStart || undefined}
+              max={todayStr}
+              onChange={(e) => handleWeekEndChange(e.target.value)}
+              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm focus:ring-2 transition-colors ${
+                errors.weekEnd
+                  ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:ring-rose-500/20 focus:border-rose-500'
+                  : 'border-slate-200 focus:ring-brand-500/20 focus:border-brand-500'
+              }`}
             />
+            {errors.weekEnd && (
+              <p className="text-xs text-rose-500 mt-1 font-medium flex items-center gap-1">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>{errors.weekEnd}</span>
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -352,26 +520,39 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
 
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-            Active Project
+            Active Project <span className="text-rose-500">*</span>
           </label>
           <select
             value={projectId}
-            onChange={(e) => setProjectId(e.target.value)}
+            onChange={(e) => handleProjectChange(e.target.value)}
             disabled={loadingProjects}
-            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 disabled:opacity-50"
+            className={`w-full px-3.5 py-2.5 rounded-xl border text-sm bg-white focus:ring-2 disabled:opacity-50 transition-colors ${
+              errors.projectId
+                ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:ring-rose-500/20 focus:border-rose-500'
+                : 'border-slate-200 focus:ring-brand-500/20 focus:border-brand-500'
+            }`}
           >
             {loadingProjects ? (
-              <option>Loading projects...</option>
+              <option value="">Loading projects...</option>
             ) : projects.length === 0 ? (
               <option value="">No projects available</option>
             ) : (
-              projects.map((p) => (
-                <option key={p._id} value={p._id}>
-                  {p.name} {p.description ? `– ${p.description}` : ''}
-                </option>
-              ))
+              <>
+                <option value="">-- Select an active project --</option>
+                {projects.map((p) => (
+                  <option key={p._id} value={p._id}>
+                    {p.name} {p.description ? `– ${p.description}` : ''}
+                  </option>
+                ))}
+              </>
             )}
           </select>
+          {errors.projectId && (
+            <p className="text-xs text-rose-500 mt-1.5 font-medium flex items-center gap-1">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              <span>{errors.projectId}</span>
+            </p>
+          )}
         </div>
       </div>
 
@@ -397,11 +578,18 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
           </button>
         </div>
 
+        {errors.tasks && (
+          <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs font-medium text-rose-700 flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
+            <span>{errors.tasks}</span>
+          </div>
+        )}
+
         <div className="overflow-x-auto -mx-6 px-6">
           <table className="w-full text-left text-xs min-w-[760px]">
             <thead className="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200">
               <tr>
-                <th className="py-3 px-3 w-[26%]">Task Name</th>
+                <th className="py-3 px-3 w-[26%]">Task Name *</th>
                 <th className="py-3 px-3 w-[12%]">Priority</th>
                 <th className="py-3 px-3 w-[12%]">Status</th>
                 <th className="py-3 px-3 w-[10%]">Plan %</th>
@@ -420,9 +608,25 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
                       required
                       placeholder="e.g. Implement OAuth Flow"
                       value={task.taskName}
-                      onChange={(e) => handleUpdateTask(idx, 'taskName', e.target.value)}
-                      className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
+                      onChange={(e) => {
+                        handleUpdateTask(idx, 'taskName', e.target.value);
+                        if (e.target.value.trim() && errors[`task_${idx}`]) {
+                          setErrors((prev) => {
+                            const next = { ...prev };
+                            delete next[`task_${idx}`];
+                            return next;
+                          });
+                        }
+                      }}
+                      className={`w-full px-2.5 py-1.5 rounded-lg border text-xs focus:ring-2 transition-colors ${
+                        errors[`task_${idx}`]
+                          ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:ring-rose-500/20 focus:border-rose-500'
+                          : 'border-slate-200 focus:ring-brand-500/20 focus:border-brand-500'
+                      }`}
                     />
+                    {errors[`task_${idx}`] && (
+                      <p className="text-[10px] text-rose-500 mt-1 font-medium">{errors[`task_${idx}`]}</p>
+                    )}
                     <input
                       type="text"
                       placeholder="Deliverable/PR link (optional)"
@@ -440,7 +644,6 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
                       <option value="LOW">Low</option>
                       <option value="MEDIUM">Medium</option>
                       <option value="HIGH">High</option>
-                      <option value="CRITICAL">Critical</option>
                     </select>
                   </td>
                   <td className="py-3 px-3">
@@ -452,8 +655,6 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
                       <option value="NOT_STARTED">Not Started</option>
                       <option value="IN_PROGRESS">In Progress</option>
                       <option value="COMPLETED">Completed</option>
-                      <option value="BLOCKED">Blocked</option>
-                      <option value="CANCELLED">Cancelled</option>
                     </select>
                   </td>
                   <td className="py-3 px-3">
@@ -462,7 +663,9 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
                       min="0"
                       max="100"
                       value={task.plannedPercentage}
-                      onChange={(e) => handleUpdateTask(idx, 'plannedPercentage', Number(e.target.value))}
+                      onChange={(e) =>
+                        handleUpdateTask(idx, 'plannedPercentage', Math.min(100, Math.max(0, Number(e.target.value))))
+                      }
                       className="w-full px-2 py-1.5 rounded-lg border border-slate-200 text-xs"
                     />
                   </td>
@@ -472,7 +675,9 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
                       min="0"
                       max="100"
                       value={task.actualPercentage}
-                      onChange={(e) => handleUpdateTask(idx, 'actualPercentage', Number(e.target.value))}
+                      onChange={(e) =>
+                        handleUpdateTask(idx, 'actualPercentage', Math.min(100, Math.max(0, Number(e.target.value))))
+                      }
                       className="w-full px-2 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-brand-700"
                     />
                   </td>
@@ -482,7 +687,9 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
                       min="0"
                       step="0.5"
                       value={task.plannedHours}
-                      onChange={(e) => handleUpdateTask(idx, 'plannedHours', Number(e.target.value))}
+                      onChange={(e) =>
+                        handleUpdateTask(idx, 'plannedHours', Math.max(0, Number(e.target.value)))
+                      }
                       className="w-full px-2 py-1.5 rounded-lg border border-slate-200 text-xs"
                     />
                   </td>
@@ -492,7 +699,9 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
                       min="0"
                       step="0.5"
                       value={task.actualHours}
-                      onChange={(e) => handleUpdateTask(idx, 'actualHours', Number(e.target.value))}
+                      onChange={(e) =>
+                        handleUpdateTask(idx, 'actualHours', Math.max(0, Number(e.target.value)))
+                      }
                       className="w-full px-2 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-900"
                     />
                   </td>
@@ -685,7 +894,7 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
               type="number"
               min="0"
               value={hours.development}
-              onChange={(e) => setHours({ ...hours, development: Number(e.target.value) })}
+              onChange={(e) => setHours({ ...hours, development: Math.max(0, Number(e.target.value)) })}
               className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800"
             />
           </div>
@@ -697,7 +906,7 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
               type="number"
               min="0"
               value={hours.testing}
-              onChange={(e) => setHours({ ...hours, testing: Number(e.target.value) })}
+              onChange={(e) => setHours({ ...hours, testing: Math.max(0, Number(e.target.value)) })}
               className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800"
             />
           </div>
@@ -709,7 +918,7 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
               type="number"
               min="0"
               value={hours.meetings}
-              onChange={(e) => setHours({ ...hours, meetings: Number(e.target.value) })}
+              onChange={(e) => setHours({ ...hours, meetings: Math.max(0, Number(e.target.value)) })}
               className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800"
             />
           </div>
@@ -721,7 +930,7 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
               type="number"
               min="0"
               value={hours.documentation}
-              onChange={(e) => setHours({ ...hours, documentation: Number(e.target.value) })}
+              onChange={(e) => setHours({ ...hours, documentation: Math.max(0, Number(e.target.value)) })}
               className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800"
             />
           </div>
@@ -733,7 +942,7 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
               type="number"
               min="0"
               value={hours.other}
-              onChange={(e) => setHours({ ...hours, other: Number(e.target.value) })}
+              onChange={(e) => setHours({ ...hours, other: Math.max(0, Number(e.target.value)) })}
               className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800"
             />
           </div>
@@ -784,7 +993,7 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
 
           <button
             type="button"
-            onClick={() => setShowConfirmSubmit(true)}
+            onClick={handleInitiateSubmit}
             disabled={submittingDraft || submittingFinal}
             className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-sm font-bold text-white shadow-md shadow-brand-500/20 transition-all disabled:opacity-50"
           >
