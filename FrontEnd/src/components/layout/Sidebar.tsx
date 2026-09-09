@@ -1,7 +1,6 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/navigation';
+import React, { useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import {
@@ -27,21 +26,39 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const { user, logout, isManager } = useAuth();
 
-  const memberNavItems = [
-    { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { label: 'My Reports', href: '/reports', icon: FileText },
-    { label: 'Create Report', href: '/reports/new', icon: PlusCircle },
-  ];
+  const memberNavItems = useMemo(
+    () => [
+      { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+      { label: 'My Reports', href: '/reports', icon: FileText },
+      { label: 'Create Report', href: '/reports/new', icon: PlusCircle },
+    ],
+    []
+  );
 
-  const managerNavItems = [
-    { label: 'Overview', href: '/manager/dashboard', icon: BarChart3 },
-    { label: 'Team Reports', href: '/manager/reports', icon: Layers },
-    { label: 'Team Members', href: '/manager/team', icon: Users },
-    { label: 'Projects', href: '/admin/projects', icon: FolderKanban },
-    { label: 'User Directory', href: '/admin/users', icon: Shield },
-  ];
+  const managerNavItems = useMemo(
+    () => [
+      { label: 'Overview', href: '/manager/dashboard', icon: BarChart3 },
+      { label: 'Team Reports', href: '/manager/reports', icon: Layers },
+      { label: 'Team Members', href: '/manager/team', icon: Users },
+      { label: 'Projects', href: '/admin/projects', icon: FolderKanban },
+      { label: 'User Directory', href: '/admin/users', icon: Shield },
+    ],
+    []
+  );
 
   const navItems = isManager ? managerNavItems : memberNavItems;
+
+  // Determine active route: exact match has priority, otherwise longest matching prefix
+  const activeHref = useMemo(() => {
+    const exact = navItems.find((n) => pathname === n.href);
+    if (exact) return exact.href;
+
+    const prefixMatches = navItems
+      .filter((n) => pathname.startsWith(`${n.href}/`))
+      .sort((a, b) => b.href.length - a.href.length);
+
+    return prefixMatches[0]?.href;
+  }, [pathname, navItems]);
 
   return (
     <>
@@ -78,7 +95,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const isActive = activeHref === item.href;
 
             return (
               <NextLink
