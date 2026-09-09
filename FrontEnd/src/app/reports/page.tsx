@@ -8,7 +8,7 @@ import { Report } from '@/types';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Pagination } from '@/components/ui/Pagination';
 import { TableSkeleton } from '@/components/ui/LoadingSkeleton';
-import { formatWeekRange, formatDate } from '@/lib/utils';
+import { formatWeekRange, formatDate, getWeekBoundaries } from '@/lib/utils';
 import {
   FileText,
   PlusCircle,
@@ -17,17 +17,30 @@ import {
   ExternalLink,
   Edit3,
   Calendar,
+  RotateCcw,
 } from 'lucide-react';
 
 export default function MyReportsPage() {
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('');
+  const [selectedWeek, setSelectedWeek] = useState('ALL');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const limit = 8;
+
+  const weekOptions = [
+    { id: 'ALL', label: 'All Weeks' },
+    { id: '0', label: `Current Week (${formatWeekRange(getWeekBoundaries(0).weekStart, getWeekBoundaries(0).weekEnd)})` },
+    { id: '1', label: `Last Week (${formatWeekRange(getWeekBoundaries(1).weekStart, getWeekBoundaries(1).weekEnd)})` },
+    { id: '2', label: `2 Weeks Ago (${formatWeekRange(getWeekBoundaries(2).weekStart, getWeekBoundaries(2).weekEnd)})` },
+    { id: '3', label: `3 Weeks Ago (${formatWeekRange(getWeekBoundaries(3).weekStart, getWeekBoundaries(3).weekEnd)})` },
+    { id: 'CUSTOM', label: 'Custom Dates...' },
+  ];
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -37,6 +50,8 @@ export default function MyReportsPage() {
           page,
           limit,
           status: statusFilter || undefined,
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
         });
         setReports(data.reports || []);
         setTotal(data.total || 0);
@@ -49,7 +64,33 @@ export default function MyReportsPage() {
     };
 
     fetchReports();
-  }, [page, statusFilter]);
+  }, [page, statusFilter, startDate, endDate]);
+
+  const handleWeekSelect = (weekId: string) => {
+    setSelectedWeek(weekId);
+    setPage(1);
+    if (weekId === 'ALL') {
+      setStartDate('');
+      setEndDate('');
+    } else if (weekId === 'CUSTOM') {
+      // Keep existing custom dates
+    } else {
+      const b = getWeekBoundaries(Number(weekId));
+      setStartDate(b.weekStart);
+      setEndDate(b.weekEnd);
+    }
+  };
+
+  const handleResetFilters = () => {
+    setSearchTerm('');
+    setStatusFilter('');
+    setSelectedWeek('ALL');
+    setStartDate('');
+    setEndDate('');
+    setPage(1);
+  };
+
+  const hasActiveFilters = Boolean(searchTerm || statusFilter || startDate || endDate || selectedWeek !== 'ALL');
 
   // Client side search across tasks/notes/project name
   const filteredReports = reports.filter((r) => {
@@ -63,48 +104,107 @@ export default function MyReportsPage() {
   return (
     <AppShell title="My Reports" subtitle="Review history and manage your weekly submissions">
       {/* Header controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <div className="flex flex-1 items-center gap-3">
-          {/* Search bar */}
-          <div className="relative flex-1 max-w-sm">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-              <Search className="w-4 h-4" />
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 mb-6 space-y-3">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+          <div className="flex flex-1 flex-wrap items-center gap-3">
+            {/* Search bar */}
+            <div className="relative flex-1 min-w-[200px] max-w-sm">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <Search className="w-4 h-4" />
+              </div>
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search reports or tasks..."
+                className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
+              />
             </div>
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search reports or tasks..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
-            />
-          </div>
 
-          {/* Status filter */}
-          <div className="relative">
+            {/* Status filter */}
             <select
               value={statusFilter}
               onChange={(e) => {
                 setStatusFilter(e.target.value);
                 setPage(1);
               }}
-              className="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              className="px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
             >
               <option value="">All Statuses</option>
               <option value="DRAFT">Draft</option>
               <option value="SUBMITTED">Submitted</option>
               <option value="NEEDS_CORRECTION">Needs Correction</option>
               <option value="APPROVED">Approved</option>
+              <option value="NOT_STARTED">Not Started / Draft</option>
+            </select>
+
+            {/* Week selector */}
+            <select
+              value={selectedWeek}
+              onChange={(e) => handleWeekSelect(e.target.value)}
+              className="px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+            >
+              {weekOptions.map((opt) => (
+                <option key={opt.id} value={opt.id}>
+                  {opt.label}
+                </option>
+              ))}
             </select>
           </div>
+
+          <Link
+            href="/reports/new"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-600 text-white hover:bg-brand-700 font-bold text-xs shadow-md shadow-brand-500/20 transition-colors shrink-0"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>New Weekly Report</span>
+          </Link>
         </div>
 
-        <Link
-          href="/reports/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 text-white hover:bg-brand-700 font-bold text-xs shadow-md shadow-brand-500/20 transition-colors shrink-0"
-        >
-          <PlusCircle className="w-4 h-4" />
-          <span>New Weekly Report</span>
-        </Link>
+        {/* Date range inputs */}
+        <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2">
+            <span className="text-slate-500 font-medium">Date Range:</span>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => {
+                setStartDate(e.target.value);
+                setSelectedWeek('CUSTOM');
+                setPage(1);
+              }}
+              className="px-2.5 py-1 rounded-lg border border-slate-200 bg-white text-slate-700"
+              title="Filter by Week Start Date"
+            />
+            <span className="text-slate-400">to</span>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => {
+                setEndDate(e.target.value);
+                setSelectedWeek('CUSTOM');
+                setPage(1);
+              }}
+              className="px-2.5 py-1 rounded-lg border border-slate-200 bg-white text-slate-700"
+              title="Filter by Week End Date"
+            />
+
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={handleResetFilters}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-rose-600 hover:bg-rose-50 border border-rose-200 transition-colors ml-1 font-semibold"
+              >
+                <RotateCcw className="w-3 h-3" />
+                <span>Reset</span>
+              </button>
+            )}
+          </div>
+
+          <div className="text-slate-500">
+            Total: <span className="font-bold text-slate-900">{total}</span> reports
+          </div>
+        </div>
       </div>
 
       {/* Reports Table */}

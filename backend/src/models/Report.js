@@ -119,7 +119,7 @@ const reportSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['DRAFT', 'SUBMITTED', 'NEEDS_CORRECTION', 'APPROVED'],
+      enum: ['DRAFT', 'SUBMITTED', 'NEEDS_CORRECTION', 'APPROVED', 'NOT_STARTED'],
       default: 'DRAFT'
     },
     latestReviewComment: {

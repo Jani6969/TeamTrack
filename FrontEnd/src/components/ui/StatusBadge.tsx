@@ -1,6 +1,6 @@
 import React from 'react';
 import { ReportStatus } from '@/types';
-import { CheckCircle2, Clock, AlertTriangle, FileEdit } from 'lucide-react';
+import { CheckCircle2, Clock, AlertTriangle, FileEdit, CircleDashed } from 'lucide-react';
 
 interface StatusBadgeProps {
   status: ReportStatus;
@@ -35,6 +35,15 @@ export function StatusBadge({ status, className = '', showIcon = true }: StatusB
         >
           {showIcon && <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />}
           Needs Correction
+        </span>
+      );
+    case 'NOT_STARTED':
+      return (
+        <span
+          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200 ${className}`}
+        >
+          {showIcon && <CircleDashed className="w-3.5 h-3.5 text-rose-500" />}
+          Not Started
         </span>
       );
     case 'DRAFT':

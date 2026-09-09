@@ -78,7 +78,21 @@ const getMyReports = async (req, res, next) => {
     const query = { user: req.user._id };
 
     if (req.query.status) {
-      query.status = req.query.status;
+      if (req.query.status === 'NOT_STARTED') {
+        query.status = { $in: ['NOT_STARTED', 'DRAFT'] };
+      } else {
+        query.status = req.query.status;
+      }
+    }
+
+    if (req.query.startDate || req.query.endDate) {
+      query.weekStart = {};
+      if (req.query.startDate) {
+        query.weekStart.$gte = new Date(req.query.startDate);
+      }
+      if (req.query.endDate) {
+        query.weekStart.$lte = new Date(req.query.endDate);
+      }
     }
 
     const total = await Report.countDocuments(query);
@@ -399,7 +413,11 @@ const getManagerReports = async (req, res, next) => {
 
     // Filter by status (e.g. SUBMITTED, APPROVED, etc.)
     if (req.query.status) {
-      filter.status = req.query.status;
+      if (req.query.status === 'NOT_STARTED') {
+        filter.status = { $in: ['NOT_STARTED', 'DRAFT'] };
+      } else {
+        filter.status = req.query.status;
+      }
     }
 
     // Filter by user/member ID

@@ -31,7 +31,13 @@ export interface ReportPayload {
 }
 
 export const reportService = {
-  async getMyReports(params?: { page?: number; limit?: number; status?: string }): Promise<PaginatedResponse<Report>> {
+  async getMyReports(params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    startDate?: string;
+    endDate?: string;
+  }): Promise<PaginatedResponse<Report>> {
     const response = await api.get<ApiResponse<PaginatedResponse<Report>>>('/reports/my', { params });
     return response.data.data;
   },

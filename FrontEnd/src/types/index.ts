@@ -41,7 +41,7 @@ export interface Project {
   updatedAt?: string;
 }
 
-export type ReportStatus = 'DRAFT' | 'SUBMITTED' | 'NEEDS_CORRECTION' | 'APPROVED';
+export type ReportStatus = 'DRAFT' | 'SUBMITTED' | 'NEEDS_CORRECTION' | 'APPROVED' | 'NOT_STARTED';
 
 export interface Report {
   _id: string;
