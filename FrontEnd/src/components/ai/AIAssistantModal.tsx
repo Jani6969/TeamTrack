@@ -303,9 +303,6 @@ Ask me anything about:
               <div>
                 <div className="flex items-center gap-1.5">
                   <h4 className="text-sm font-bold leading-tight tracking-tight">TeamTrack Copilot</h4>
-                  <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-brand-500/20 text-brand-300 border border-brand-400/30">
-                    Gemini 3.6
-                  </span>
                 </div>
                 <p className="text-[11px] text-slate-400 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
@@ -564,7 +561,7 @@ Ask me anything about:
                     <div>
                       <h5 className="font-semibold text-slate-900 text-sm">Synthesizing Reports & Blockers</h5>
                       <p className="text-xs text-slate-500 max-w-sm mt-1">
-                        Gemini AI is parsing recent weekly submissions, hours distribution, and blocker logs...
+                        Analyzing recent weekly submissions, hours distribution, and blocker logs...
                       </p>
                     </div>
                   </div>
@@ -572,7 +569,7 @@ Ask me anything about:
                   <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-4">
                     <div className="flex items-center justify-between pb-3 border-b border-slate-100 text-xs text-slate-500">
                       <span className="flex items-center gap-1.5 font-medium text-slate-700">
-                        <Sparkles className="w-4 h-4 text-amber-500" /> Generated via Google Gemini 3.6 Flash
+                        <Sparkles className="w-4 h-4 text-amber-500" /> Executive AI Intelligence
                       </span>
                       <span>{summaryTimestamp ? `Updated ${summaryTimestamp}` : ''}</span>
                     </div>

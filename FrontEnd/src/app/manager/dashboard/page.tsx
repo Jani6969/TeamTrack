@@ -181,9 +181,6 @@ export default function ManagerDashboardPage() {
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-base font-bold tracking-tight">TeamTrack AI Copilot & Executive Intelligence</h3>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-brand-500/30 text-brand-300 border border-brand-400/30">
-                Gemini 3.6 Flash
-              </span>
             </div>
             <p className="text-xs text-slate-300 mt-0.5 max-w-2xl">
               Ask questions about sprint accomplishments, query developer blockers in real time, or generate an automated capacity and risk assessment.
