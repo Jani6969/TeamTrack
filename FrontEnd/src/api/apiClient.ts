@@ -1,10 +1,7 @@
 import axios from "axios";
 
 // Direct backend endpoint
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  process.env.BACKEND_API_URL ||
-  "http://localhost:5000/api";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export class ApiError extends Error {
   status: number;
@@ -37,7 +34,7 @@ export async function apiRequest<T>(
     timeout = 15000,
   } = options;
 
-  const url = `${baseURL}${path}`;
+  const url = `${baseURL || ""}${path}`;
 
   // Automatically check localStorage for JWT token in client environment if not provided
   let resolvedToken = token;
