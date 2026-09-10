@@ -115,28 +115,24 @@ export default function MemberProfilePage() {
               <StatCard
                 title="Total Reports"
                 value={totalReports}
-                subtitle="All logged weeks"
                 icon={<FileCheck2 className="w-4 h-4" />}
                 color="indigo"
               />
               <StatCard
                 title="Approved"
                 value={approvedCount}
-                subtitle="Passed review"
                 icon={<CheckCircle2 className="w-4 h-4" />}
                 color="emerald"
               />
               <StatCard
                 title="Pending"
                 value={pendingCount}
-                subtitle="Awaiting signoff"
                 icon={<Clock className="w-4 h-4" />}
                 color="blue"
               />
               <StatCard
                 title="Corrections"
                 value={correctionCount}
-                subtitle="Revisions requested"
                 icon={<AlertTriangle className="w-4 h-4" />}
                 color={correctionCount > 0 ? 'amber' : 'blue'}
               />

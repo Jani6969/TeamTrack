@@ -171,6 +171,26 @@ Ask me anything about:
     }
   }, [isOpen, isAuthenticated]);
 
+  // Global listener for dashboard quick chips
+  useEffect(() => {
+    const handleOpenCopilot = (e: Event) => {
+      const customEvent = e as CustomEvent<{ prompt?: string; tab?: 'chat' | 'summary' }>;
+      setIsOpen(true);
+      if (customEvent.detail?.tab) {
+        setActiveTab(customEvent.detail.tab);
+      }
+      if (customEvent.detail?.prompt) {
+        if (customEvent.detail.tab !== 'summary') {
+          setActiveTab('chat');
+        }
+        handleSend(customEvent.detail.prompt);
+      }
+    };
+
+    window.addEventListener('teamtrack:open-ai', handleOpenCopilot);
+    return () => window.removeEventListener('teamtrack:open-ai', handleOpenCopilot);
+  }, [messages, isTyping]);
+
   useEffect(() => {
     if (activeTab === 'chat') {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
