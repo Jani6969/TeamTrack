@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
-import { Activity, Eye, EyeOff, Lock, Mail, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, ArrowRight, ShieldCheck } from 'lucide-react';
 
 export default function LoginPage() {
   const { login, isLoading } = useAuth();
@@ -52,8 +53,15 @@ export default function LoginPage() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 px-4">
         {/* Brand Logo */}
         <div className="flex justify-center mb-6">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-xl shadow-brand-500/30">
-            <Activity className="w-8 h-8" />
+          <div className="w-16 h-16 flex items-center justify-center">
+            <Image
+              src="/logo-icon.png"
+              alt="TeamTrack Logo"
+              width={64}
+              height={64}
+              className="w-full h-full object-contain drop-shadow-2xl"
+              priority
+            />
           </div>
         </div>
 

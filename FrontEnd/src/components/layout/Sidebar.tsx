@@ -16,6 +16,7 @@ import {
   Layers,
 } from 'lucide-react';
 import NextLink from 'next/link';
+import Image from 'next/image';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -78,8 +79,15 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       >
         {/* Brand Header */}
         <div className="h-16 flex items-center gap-3 px-6 border-b border-slate-800">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
-            <Activity className="w-5 h-5" />
+          <div className="w-9 h-9 flex items-center justify-center shrink-0">
+            <Image
+              src="/logo-icon.png"
+              alt="TeamTrack Logo"
+              width={36}
+              height={36}
+              className="w-full h-full object-contain drop-shadow-md"
+              priority
+            />
           </div>
           <div>
             <div className="font-extrabold text-base tracking-tight text-white leading-tight">TeamTrack</div>

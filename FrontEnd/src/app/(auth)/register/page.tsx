@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
-import { Activity, User, Mail, Lock, ArrowRight, UserCheck } from 'lucide-react';
+import { User, Mail, Lock, ArrowRight, UserCheck } from 'lucide-react';
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -27,13 +28,13 @@ export default function RegisterPage() {
       return;
     }
 
-    if (password.length < 6) {
-      setErrorMessage('Password must be at least 6 characters long.');
+    if (password !== confirmPassword) {
+      setErrorMessage('Passwords do not match.');
       return;
     }
 
-    if (password !== confirmPassword) {
-      setErrorMessage('Passwords do not match.');
+    if (password.length < 6) {
+      setErrorMessage('Password must be at least 6 characters.');
       return;
     }
 
@@ -60,8 +61,15 @@ export default function RegisterPage() {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 px-4">
         <div className="flex justify-center mb-6">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-xl shadow-brand-500/30">
-            <Activity className="w-8 h-8" />
+          <div className="w-16 h-16 flex items-center justify-center">
+            <Image
+              src="/logo-icon.png"
+              alt="TeamTrack Logo"
+              width={64}
+              height={64}
+              className="w-full h-full object-contain drop-shadow-2xl"
+              priority
+            />
           </div>
         </div>
 

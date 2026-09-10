@@ -13,6 +13,10 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'TeamTrack – Weekly Team Reporting & Analytics Platform',
   description: 'Enterprise weekly status reporting, managerial reviews, and team productivity analytics.',
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 export default function RootLayout({
