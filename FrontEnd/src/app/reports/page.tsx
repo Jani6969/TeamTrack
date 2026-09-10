@@ -266,8 +266,8 @@ export default function MyReportsPage() {
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm min-w-[700px]">
-                <thead className="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-100">
+              <table className="w-full text-left text-sm min-w-[880px]">
+                <thead className="bg-slate-50/90 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-100">
                   <tr>
                     <th className="py-3.5 px-6">Week Range</th>
                     <th className="py-3.5 px-6">Project</th>
@@ -283,36 +283,51 @@ export default function MyReportsPage() {
                     const canEdit = rep.status === 'DRAFT' || rep.status === 'NEEDS_CORRECTION';
 
                     return (
-                      <tr key={rep._id} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="py-4 px-6 font-semibold text-slate-900">
-                          <div className="flex items-center gap-2">
-                            <Calendar className="w-4 h-4 text-brand-500 shrink-0" />
-                            <span>{formatWeekRange(rep.weekStart, rep.weekEnd)}</span>
+                      <tr key={rep._id} className="hover:bg-slate-50/80 transition-colors group">
+                        <td className="py-4 px-6 whitespace-nowrap">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center shrink-0 border border-brand-200/60 shadow-2xs">
+                              <Calendar className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <div className="font-bold text-slate-900 text-xs sm:text-sm tracking-tight">
+                                {formatWeekRange(rep.weekStart, rep.weekEnd)}
+                              </div>
+                              <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
+                                Weekly Cycle
+                              </div>
+                            </div>
                           </div>
                         </td>
-                        <td className="py-4 px-6 font-medium text-slate-700">{projectName}</td>
-                        <td className="py-4 px-6">
+                        <td className="py-4 px-6 whitespace-nowrap">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-50/90 text-cyan-900 border border-cyan-200/80 text-xs font-semibold shadow-2xs">
+                            <FileText className="w-3.5 h-3.5 text-cyan-600 shrink-0" />
+                            <span>{projectName}</span>
+                          </span>
+                        </td>
+                        <td className="py-4 px-6 whitespace-nowrap">
                           <StatusBadge status={rep.status} />
                         </td>
-                        <td className="py-4 px-6 text-slate-600">
-                          <span className="font-semibold text-slate-800">{rep.tasks?.length || 0}</span> tasks
+                        <td className="py-4 px-6 whitespace-nowrap text-xs text-slate-600 font-medium">
+                          <span className="font-bold text-slate-900">{rep.tasks?.length || 0}</span> tasks logged
                         </td>
-                        <td className="py-4 px-6 text-xs text-slate-500">
+                        <td className="py-4 px-6 whitespace-nowrap text-xs text-slate-500 font-medium">
                           {formatDate(rep.submittedAt || rep.updatedAt || rep.createdAt)}
                         </td>
                         <td className="py-3.5 px-6 text-right whitespace-nowrap">
                           <div className="inline-flex items-center justify-end gap-2">
                             <Link
                               href={`/reports/${rep._id}`}
-                              className="h-8 px-3 rounded-lg text-xs font-semibold inline-flex items-center justify-center whitespace-nowrap bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm transition-all"
+                              className="h-8 px-3.5 rounded-xl text-xs font-bold inline-flex items-center justify-center whitespace-nowrap bg-white hover:bg-brand-50 text-slate-700 hover:text-brand-700 border border-slate-200 hover:border-brand-200 shadow-2xs transition-all"
                             >
-                              View
+                              <span>View</span>
+                              <ExternalLink className="w-3.5 h-3.5 ml-1.5" />
                             </Link>
 
                             {canEdit && (
                               <Link
                                 href={`/reports/${rep._id}/edit`}
-                                className="h-8 px-3 rounded-lg text-xs font-semibold inline-flex items-center justify-center whitespace-nowrap bg-brand-600 hover:bg-brand-700 text-white shadow-sm shadow-brand-500/20 transition-all"
+                                className="h-8 px-3.5 rounded-xl text-xs font-bold inline-flex items-center justify-center whitespace-nowrap bg-brand-600 hover:bg-brand-700 text-white shadow-sm shadow-brand-500/20 transition-all hover:scale-105 active:scale-95"
                               >
                                 {rep.status === 'NEEDS_CORRECTION' ? 'Resubmit' : 'Edit'}
                               </Link>

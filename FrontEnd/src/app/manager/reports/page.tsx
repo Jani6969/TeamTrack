@@ -28,6 +28,23 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 
+const getAvatarGradient = (name: string) => {
+  const gradients = [
+    'from-brand-600 to-indigo-600',
+    'from-blue-600 to-cyan-600',
+    'from-emerald-600 to-teal-600',
+    'from-amber-600 to-orange-600',
+    'from-purple-600 to-fuchsia-600',
+    'from-rose-600 to-pink-600',
+  ];
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % gradients.length;
+  return gradients[index];
+};
+
 export default function ManagerReportsPage() {
   const { success: toastSuccess, info: toastInfo, error: toastError } = useToast();
 
@@ -237,7 +254,7 @@ export default function ManagerReportsPage() {
       subtitle="Review team member submissions, evaluate deliverables, and track weekly submission compliance"
     >
       {/* Top Filter Container */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 mb-6 space-y-4">
+      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-4 sm:p-5 mb-6 space-y-4">
         {/* Row 1: Search + Dropdown Filters */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* Search */}
@@ -250,13 +267,13 @@ export default function ManagerReportsPage() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search member, email, project..."
-              className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
+              className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
             />
           </div>
 
           {/* Filter by Team Member */}
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-indigo-500">
               <Users className="w-4 h-4" />
             </div>
             <select
@@ -265,7 +282,7 @@ export default function ManagerReportsPage() {
                 setMemberFilter(e.target.value);
                 setPage(1);
               }}
-              className="w-full pl-9 pr-8 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 appearance-none truncate"
+              className="w-full pl-9 pr-8 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 appearance-none truncate transition-all"
             >
               <option value="">All Team Members</option>
               {teamMembers.map((m) => (
@@ -278,7 +295,7 @@ export default function ManagerReportsPage() {
 
           {/* Filter by Project */}
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-cyan-600">
               <FolderKanban className="w-4 h-4" />
             </div>
             <select
@@ -287,7 +304,7 @@ export default function ManagerReportsPage() {
                 setProjectFilter(e.target.value);
                 setPage(1);
               }}
-              className="w-full pl-9 pr-8 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 appearance-none truncate"
+              className="w-full pl-9 pr-8 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:border-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 appearance-none truncate transition-all"
             >
               <option value="">All Projects</option>
               {projects.map((p) => (
@@ -298,9 +315,9 @@ export default function ManagerReportsPage() {
             </select>
           </div>
 
-          {/* Filter by Status (including NOT_STARTED) */}
+          {/* Filter by Status */}
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-amber-500">
               <Clock className="w-4 h-4" />
             </div>
             <select
@@ -309,7 +326,7 @@ export default function ManagerReportsPage() {
                 setStatusFilter(e.target.value);
                 setPage(1);
               }}
-              className="w-full pl-9 pr-8 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 appearance-none truncate"
+              className="w-full pl-9 pr-8 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 appearance-none truncate transition-all"
             >
               <option value="">All Statuses</option>
               <option value="SUBMITTED">Submitted (Pending Review)</option>
@@ -321,7 +338,7 @@ export default function ManagerReportsPage() {
           </div>
         </div>
 
-        {/* Row 2: Selected Week + Date Range (Start Date, End Date) + Reset */}
+        {/* Row 2: Selected Week + Date Range */}
         <div className="pt-3 border-t border-slate-100 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
           <div className="flex flex-wrap items-center gap-3">
             {/* Week Selector Dropdown */}
@@ -333,7 +350,7 @@ export default function ManagerReportsPage() {
               <select
                 value={selectedWeek}
                 onChange={(e) => handleWeekSelect(e.target.value)}
-                className="px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
+                className="px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50/80 hover:bg-white text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
               >
                 {weekOptions.map((opt) => (
                   <option key={opt.id} value={opt.id}>
@@ -343,7 +360,7 @@ export default function ManagerReportsPage() {
               </select>
             </div>
 
-            {/* Date Range Inputs: Start Date & End Date */}
+            {/* Date Range Inputs */}
             <div className="flex items-center gap-2">
               <span className="text-xs font-medium text-slate-500">From:</span>
               <input
@@ -372,8 +389,8 @@ export default function ManagerReportsPage() {
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 border border-rose-200/80 transition-colors"
-                title="Reset all search, status, project, member and date filters"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 border border-rose-200 transition-colors"
+                title="Reset all filters"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Clear Filters</span>
@@ -391,24 +408,24 @@ export default function ManagerReportsPage() {
         </div>
       </div>
 
-      {/* View Tabs: All Submitted Reports vs Not Yet Started Tracker */}
+      {/* View Tabs */}
       <div className="flex items-center justify-between gap-3 mb-4">
-        <div className="flex items-center gap-2 p-1 bg-slate-200/60 rounded-xl">
+        <div className="flex items-center gap-1.5 p-1 bg-slate-200/70 rounded-2xl">
           <button
             type="button"
             onClick={() => {
               setActiveTab('REPORTS');
               if (statusFilter === 'NOT_STARTED') setStatusFilter('');
             }}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
               activeTab === 'REPORTS'
-                ? 'bg-white text-slate-900 shadow-sm'
+                ? 'bg-white text-brand-700 shadow-sm border border-brand-200/80'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
             <span>Weekly Reports</span>
-            <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-100 text-slate-700">
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-brand-50 text-brand-700 border border-brand-200/60">
               {total}
             </span>
           </button>
@@ -416,15 +433,15 @@ export default function ManagerReportsPage() {
           <button
             type="button"
             onClick={() => setActiveTab('NOT_STARTED')}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
               activeTab === 'NOT_STARTED'
-                ? 'bg-white text-amber-700 shadow-sm'
+                ? 'bg-white text-amber-800 shadow-sm border border-amber-300'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             <CircleDashed className="w-3.5 h-3.5 text-amber-500" />
             <span>Not Yet Started / Missing</span>
-            <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-amber-100 text-amber-800 font-bold">
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-200">
               {notStartedMembers.length}
             </span>
           </button>
@@ -434,7 +451,7 @@ export default function ManagerReportsPage() {
           <button
             type="button"
             onClick={handleRemindAll}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-sm transition-all"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-sm transition-all"
           >
             <Bell className="w-3.5 h-3.5" />
             <span>Remind All ({notStartedMembers.length})</span>
@@ -444,7 +461,7 @@ export default function ManagerReportsPage() {
 
       {/* Main Content Area: REPORTS TAB */}
       {activeTab === 'REPORTS' && (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
           {loading ? (
             <div className="p-6">
               <TableSkeleton rows={8} cols={6} />
@@ -471,8 +488,8 @@ export default function ManagerReportsPage() {
           ) : (
             <>
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm min-w-[840px]">
-                  <thead className="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-100">
+                <table className="w-full text-left text-sm min-w-[960px]">
+                  <thead className="bg-slate-50/90 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-100">
                     <tr>
                       <th className="py-3.5 px-6">Team Member</th>
                       <th className="py-3.5 px-6">Week Range</th>
@@ -499,33 +516,59 @@ export default function ManagerReportsPage() {
                           : 'Project';
 
                       return (
-                        <tr key={rep._id} className="hover:bg-slate-50/80 transition-colors">
-                          <td className="py-4 px-6">
+                        <tr key={rep._id} className="hover:bg-slate-50/80 transition-colors group">
+                          <td className="py-4 px-6 whitespace-nowrap">
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center text-xs font-bold shrink-0">
-                                {(memberName || 'Team Member').charAt(0).toUpperCase()}
+                              <div
+                                className={`w-9 h-9 rounded-full bg-gradient-to-tr ${getAvatarGradient(
+                                  memberName
+                                )} text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-xs ring-2 ring-white`}
+                              >
+                                {(memberName || 'T').charAt(0).toUpperCase()}
                               </div>
                               <div>
-                                <div className="font-bold text-slate-900">{memberName}</div>
-                                <div className="text-[11px] text-slate-400">{memberEmail}</div>
+                                <div className="font-bold text-sm text-slate-900 group-hover:text-brand-700 transition-colors">
+                                  {memberName}
+                                </div>
+                                <div className="text-xs text-slate-400">{memberEmail}</div>
                               </div>
                             </div>
                           </td>
-                          <td className="py-4 px-6 font-semibold text-slate-900">
-                            {formatWeekRange(rep.weekStart, rep.weekEnd)}
+                          <td className="py-4 px-6 whitespace-nowrap">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center shrink-0 border border-brand-200/60 shadow-2xs">
+                                <Calendar className="w-4 h-4" />
+                              </div>
+                              <div>
+                                <div className="font-bold text-slate-900 text-xs sm:text-sm tracking-tight">
+                                  {formatWeekRange(rep.weekStart, rep.weekEnd)}
+                                </div>
+                                <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
+                                  Weekly Cycle
+                                </div>
+                              </div>
+                            </div>
                           </td>
-                          <td className="py-4 px-6 text-slate-600 font-medium">{projName}</td>
-                          <td className="py-4 px-6">
+                          <td className="py-4 px-6 whitespace-nowrap">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-50/90 text-cyan-900 border border-cyan-200/80 text-xs font-semibold shadow-2xs">
+                              <FolderKanban className="w-3.5 h-3.5 text-cyan-600 shrink-0" />
+                              <span>{projName}</span>
+                            </span>
+                          </td>
+                          <td className="py-4 px-6 whitespace-nowrap">
                             <StatusBadge status={rep.status} />
                           </td>
-                          <td className="py-4 px-6 text-xs text-slate-500">
-                            {formatDate(rep.submittedAt || rep.createdAt)}
+                          <td className="py-4 px-6 whitespace-nowrap">
+                            <div className="text-xs font-bold text-slate-800">
+                              {formatDate(rep.submittedAt || rep.createdAt)}
+                            </div>
+                            <div className="text-[10px] text-slate-400 font-medium">Logged Date</div>
                           </td>
-                          <td className="py-3.5 px-6 text-right whitespace-nowrap">
+                          <td className="py-4 px-6 text-right whitespace-nowrap">
                             <div className="inline-flex items-center justify-end gap-2">
                               <Link
                                 href={`/reports/${rep._id}`}
-                                className="h-8 w-8 rounded-lg border border-slate-200 bg-white text-slate-500 hover:text-brand-600 hover:border-brand-200 hover:bg-brand-50 flex items-center justify-center transition-all shadow-sm shrink-0"
+                                className="h-8 w-8 rounded-xl border border-slate-200 bg-white text-slate-500 hover:text-brand-600 hover:border-brand-200 hover:bg-brand-50 flex items-center justify-center transition-all shadow-2xs shrink-0"
                                 title="View Document"
                               >
                                 <ExternalLink className="w-3.5 h-3.5" />
@@ -533,10 +576,10 @@ export default function ManagerReportsPage() {
 
                               <Link
                                 href={`/manager/reports/${rep._id}/review`}
-                                className={`h-8 px-3.5 rounded-lg text-xs font-semibold inline-flex items-center justify-center whitespace-nowrap transition-all shadow-sm ${
+                                className={`h-8 px-3.5 rounded-xl text-xs font-bold inline-flex items-center justify-center whitespace-nowrap transition-all shadow-2xs ${
                                   rep.status === 'SUBMITTED'
                                     ? 'bg-brand-600 hover:bg-brand-700 text-white shadow-brand-500/20'
-                                    : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200'
+                                    : 'bg-white hover:bg-brand-50 text-slate-700 hover:text-brand-700 border border-slate-200 hover:border-brand-200'
                                 }`}
                               >
                                 {rep.status === 'SUBMITTED' ? 'Review Now' : 'Review Details'}
