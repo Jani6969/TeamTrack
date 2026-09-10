@@ -4,7 +4,11 @@ import { Inter } from 'next/font/google';
 import { AuthProvider } from '@/context/AuthContext';
 import { ToastProvider } from '@/context/ToastContext';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+});
 
 export const metadata: Metadata = {
   title: 'TeamTrack – Weekly Team Reporting & Analytics Platform',
