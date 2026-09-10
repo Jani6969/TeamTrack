@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
 import { ReportForm } from '@/components/reports/ReportForm';
-import { reportService } from '@/services/reportService';
+import { getReportById } from '@/api/reports';
 import { Report } from '@/types';
 import { useToast } from '@/context/ToastContext';
 import { AlertCircle, Lock } from 'lucide-react';
@@ -24,7 +24,7 @@ export default function EditReportPage() {
 
     const fetchReport = async () => {
       try {
-        const data = await reportService.getReportById(id);
+        const data = await getReportById(id);
         setReport(data);
       } catch (err: any) {
         toastError(err.message || 'Failed to load report');

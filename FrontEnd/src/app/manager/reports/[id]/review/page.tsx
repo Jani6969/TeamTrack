@@ -4,8 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
-import { managerService } from '@/services/managerService';
-import { reportService } from '@/services/reportService';
+import {
+  getManagerReportById,
+  approveReport,
+  requestCorrection,
+} from '@/api/manager';
+import { getReportReviews } from '@/api/reports';
 import { Report, Review } from '@/types';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { PriorityBadge, TaskStatusBadge } from '@/components/ui/PriorityBadge';
@@ -53,8 +57,8 @@ export default function ManagerReviewPage() {
     const fetchReport = async () => {
       try {
         const [rep, revs] = await Promise.all([
-          managerService.getManagerReportById(id),
-          reportService.getReportReviews(id).catch(() => []),
+          getManagerReportById(id),
+          getReportReviews(id).catch(() => []),
         ]);
         setReport(rep);
         setReviews(revs || []);
@@ -72,7 +76,7 @@ export default function ManagerReviewPage() {
     if (!report) return;
     setApproving(true);
     try {
-      const res = await managerService.approveReport(report._id, approvalNote.trim() || 'Report approved');
+      const res = await approveReport(report._id, approvalNote.trim() || 'Report approved');
       setReport(res.report);
       setReviews((prev) => [res.review, ...prev]);
       setShowApproveConfirm(false);
@@ -95,7 +99,7 @@ export default function ManagerReviewPage() {
 
     setRequestingCorrection(true);
     try {
-      const res = await managerService.requestCorrection(report._id, correctionComment.trim());
+      const res = await requestCorrection(report._id, correctionComment.trim());
       setReport(res.report);
       setReviews((prev) => [res.review, ...prev]);
       setShowCorrectionModal(false);

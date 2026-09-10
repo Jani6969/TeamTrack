@@ -3,9 +3,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
-import { managerService } from '@/services/managerService';
-import { projectService } from '@/services/projectService';
-import { userService } from '@/services/userService';
+import { getManagerReports } from '@/api/manager';
+import { getProjects } from '@/api/projects';
+import { getUsers } from '@/api/users';
 import { useToast } from '@/context/ToastContext';
 import { Report, Project, User } from '@/types';
 import { StatusBadge } from '@/components/ui/StatusBadge';
@@ -60,21 +60,18 @@ export default function ManagerReportsPage() {
   // Predefined week options for quick selection
   const weekOptions = useMemo(() => {
     return [
-      { id: 'ALL', label: 'All Weeks (No week filter)' },
+      { id: 'ALL', label: 'All Weeks' },
       { id: '0', label: `Current Week (${formatWeekRange(getWeekBoundaries(0).weekStart, getWeekBoundaries(0).weekEnd)})` },
       { id: '1', label: `Last Week (${formatWeekRange(getWeekBoundaries(1).weekStart, getWeekBoundaries(1).weekEnd)})` },
       { id: '2', label: `2 Weeks Ago (${formatWeekRange(getWeekBoundaries(2).weekStart, getWeekBoundaries(2).weekEnd)})` },
       { id: '3', label: `3 Weeks Ago (${formatWeekRange(getWeekBoundaries(3).weekStart, getWeekBoundaries(3).weekEnd)})` },
-      { id: '4', label: `4 Weeks Ago (${formatWeekRange(getWeekBoundaries(4).weekStart, getWeekBoundaries(4).weekEnd)})` },
-      { id: 'CUSTOM', label: 'Custom Date Range...' },
     ];
   }, []);
 
   // Fetch reference projects and users on load
   useEffect(() => {
-    projectService.getProjects().then(setProjects).catch(console.error);
-    userService
-      .getUsers()
+    getProjects().then(setProjects).catch(console.error);
+    getUsers()
       .then((users) => {
         setTeamMembers(users.filter((u) => u.role === 'TEAM_MEMBER' || u.role === 'MANAGER'));
       })
@@ -86,7 +83,7 @@ export default function ManagerReportsPage() {
     const fetchReports = async () => {
       setLoading(true);
       try {
-        const data = await managerService.getManagerReports({
+        const data = await getManagerReports({
           page,
           limit,
           status: statusFilter || undefined,

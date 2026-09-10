@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
-import { dashboardService } from '@/services/dashboardService';
+import { getStatusByMember } from '@/api/dashboard';
 import { MemberStatusItem } from '@/types';
 import { TableSkeleton } from '@/components/ui/LoadingSkeleton';
 import { Users, ChevronRight, CheckCircle2, Clock, AlertTriangle, FileText } from 'lucide-react';
@@ -13,8 +13,7 @@ export default function TeamDirectoryPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    dashboardService
-      .getStatusByMember()
+    getStatusByMember()
       .then((data) => setMembers(data || []))
       .catch(console.error)
       .finally(() => setLoading(false));

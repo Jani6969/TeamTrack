@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
 import { useAuth } from '@/context/AuthContext';
-import { reportService } from '@/services/reportService';
+import { getReportById, getReportReviews } from '@/api/reports';
 import { Report, Review } from '@/types';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { PriorityBadge, TaskStatusBadge } from '@/components/ui/PriorityBadge';
@@ -44,8 +44,8 @@ export default function ReportDetailPage() {
     const fetchReportData = async () => {
       try {
         const [rep, revs] = await Promise.all([
-          reportService.getReportById(id),
-          reportService.getReportReviews(id).catch(() => []),
+          getReportById(id),
+          getReportReviews(id).catch(() => []),
         ]);
         setReport(rep);
         setReviews(revs || []);

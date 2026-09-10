@@ -2,9 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { authService } from '@/services/authService';
+import { loginUser, registerUser, getMe } from '@/api/auth';
 import { User, UserRole } from '@/types';
-import { getErrorMessage } from '@/lib/api';
 
 interface AuthContextType {
   user: User | null;
@@ -44,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
           // Verify with backend
           try {
-            const profile = await authService.getMe();
+            const profile = await getMe();
             setUser(profile);
             localStorage.setItem('user', JSON.stringify(profile));
           } catch (apiErr) {
@@ -68,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (credentials: { email: string; password: string }) => {
     setIsLoading(true);
     try {
-      const data = await authService.login(credentials);
+      const data = await loginUser(credentials);
       setToken(data.token);
       setUser(data.user);
       localStorage.setItem('token', data.token);
@@ -81,7 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         router.push('/dashboard');
       }
     } catch (err) {
-      throw new Error(getErrorMessage(err));
+      throw new Error(err instanceof Error ? err.message : 'Login failed');
     } finally {
       setIsLoading(false);
     }
@@ -90,7 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (data: { name: string; email: string; password: string; role?: string }) => {
     setIsLoading(true);
     try {
-      const res = await authService.register(data);
+      const res = await registerUser(data);
       setToken(res.token);
       setUser(res.user);
       localStorage.setItem('token', res.token);
@@ -102,7 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         router.push('/dashboard');
       }
     } catch (err) {
-      throw new Error(getErrorMessage(err));
+      throw new Error(err instanceof Error ? err.message : 'Registration failed');
     } finally {
       setIsLoading(false);
     }
@@ -118,7 +117,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshUser = async () => {
     try {
-      const profile = await authService.getMe();
+      const profile = await getMe();
       setUser(profile);
       localStorage.setItem('user', JSON.stringify(profile));
     } catch (err) {

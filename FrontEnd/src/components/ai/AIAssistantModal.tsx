@@ -25,8 +25,7 @@ import {
   fetchAITeamSummary,
   fetchSuggestedPrompts,
   AIChatMessage,
-} from '@/services/aiService';
-import { getErrorMessage } from '@/lib/api';
+} from '@/api/ai';
 
 /**
  * Lightweight helper to render markdown styling safely
@@ -210,7 +209,7 @@ Ask me anything about:
         },
       ]);
     } catch (err) {
-      const errMsg = getErrorMessage(err);
+      const errMsg = err instanceof Error ? err.message : 'An error occurred';
       setErrorMsg(errMsg);
       setMessages([
         ...newHistory,
@@ -232,7 +231,7 @@ Ask me anything about:
       setSummaryData(res.summary);
       setSummaryTimestamp(new Date(res.generatedAt).toLocaleString());
     } catch (err) {
-      setErrorMsg(getErrorMessage(err));
+      setErrorMsg(err instanceof Error ? err.message : 'Failed to generate summary');
     } finally {
       setSummaryLoading(false);
     }

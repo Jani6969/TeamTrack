@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
-import { userService } from '@/services/userService';
-import { managerService } from '@/services/managerService';
+import { getUserById } from '@/api/users';
+import { getManagerReports } from '@/api/manager';
 import { User, Report } from '@/types';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { StatCard } from '@/components/ui/StatCard';
@@ -37,8 +37,8 @@ export default function MemberProfilePage() {
     const fetchMemberData = async () => {
       try {
         const [userData, repData] = await Promise.all([
-          userService.getUserById(id),
-          managerService.getManagerReports({ userId: id, limit: 20 }),
+          getUserById(id),
+          getManagerReports({ userId: id, limit: 20 }),
         ]);
         setMember(userData);
         setReports(repData.reports || []);

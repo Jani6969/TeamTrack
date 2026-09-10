@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
 import { useAuth } from '@/context/AuthContext';
-import { reportService } from '@/services/reportService';
+import { getMyReports } from '@/api/reports';
 import { Report } from '@/types';
 import { StatCard } from '@/components/ui/StatCard';
 import { StatusBadge } from '@/components/ui/StatusBadge';
@@ -29,7 +29,7 @@ export default function MemberDashboardPage() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const data = await reportService.getMyReports({ page: 1, limit: 10 });
+        const data = await getMyReports({ page: 1, limit: 10 });
         setReports(data.reports || []);
       } catch (err) {
         console.error('Failed to load member reports:', err);

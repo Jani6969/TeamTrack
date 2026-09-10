@@ -2,7 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
-import { projectService } from '@/services/projectService';
+import {
+  getProjects,
+  createProject,
+  updateProject,
+  deleteProject,
+} from '@/api/projects';
 import { Project } from '@/types';
 import { Modal } from '@/components/ui/Modal';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
@@ -40,7 +45,7 @@ export default function ProjectsManagementPage() {
 
   const fetchProjects = async () => {
     try {
-      const data = await projectService.getProjects();
+      const data = await getProjects();
       setProjects(data || []);
     } catch (err) {
       console.error('Failed to load projects:', err);
@@ -62,11 +67,11 @@ export default function ProjectsManagementPage() {
     setShowModal(true);
   };
 
-  const openEditModal = (p: Project) => {
-    setEditingProject(p);
-    setName(p.name);
-    setDescription(p.description || '');
-    setIsActive(p.isActive);
+  const openEditModal = (project: Project) => {
+    setEditingProject(project);
+    setName(project.name);
+    setDescription(project.description || '');
+    setIsActive(project.isActive);
     setShowModal(true);
   };
 
@@ -80,14 +85,14 @@ export default function ProjectsManagementPage() {
     setSubmitting(true);
     try {
       if (editingProject) {
-        await projectService.updateProject(editingProject._id, {
+        await updateProject(editingProject._id, {
           name: name.trim(),
           description: description.trim(),
           isActive,
         });
         toastSuccess('Project updated successfully');
       } else {
-        await projectService.createProject({
+        await createProject({
           name: name.trim(),
           description: description.trim(),
           isActive,
@@ -107,7 +112,7 @@ export default function ProjectsManagementPage() {
     if (!deleteProjectItem) return;
     setDeleting(true);
     try {
-      await projectService.deleteProject(deleteProjectItem._id);
+      await deleteProject(deleteProjectItem._id);
       toastSuccess('Project deleted');
       setDeleteProjectItem(null);
       fetchProjects();

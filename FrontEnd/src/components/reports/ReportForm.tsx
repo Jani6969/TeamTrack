@@ -2,8 +2,14 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { projectService } from '@/services/projectService';
-import { reportService, ReportPayload } from '@/services/reportService';
+import { getProjects } from '@/api/projects';
+import {
+  createReport,
+  updateReport,
+  submitReport,
+  resubmitReport,
+  ReportPayload,
+} from '@/api/reports';
 import { Project, Report, TaskItem, TaskPriority, TaskStatus } from '@/types';
 import { useToast } from '@/context/ToastContext';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
@@ -126,7 +132,7 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const projs = await projectService.getProjects();
+        const projs = await getProjects();
         setProjects(projs);
         if (initialData?.project) {
           const id =
@@ -350,10 +356,10 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
       const payload = buildPayload();
       let saved: Report;
       if (isEditing && initialData?._id) {
-        saved = await reportService.updateReport(initialData._id, payload);
+        saved = await updateReport(initialData._id, payload);
         toastSuccess('Draft updated successfully');
       } else {
-        saved = await reportService.createReport(payload);
+        saved = await createReport(payload);
         toastSuccess('Draft created successfully');
         router.replace(`/reports/${saved._id}/edit`);
       }
@@ -381,18 +387,18 @@ export function ReportForm({ initialData, isEditing = false }: ReportFormProps) 
       let targetId = initialData?._id;
 
       if (isEditing && targetId) {
-        await reportService.updateReport(targetId, payload);
+        await updateReport(targetId, payload);
       } else {
-        const created = await reportService.createReport(payload);
+        const created = await createReport(payload);
         targetId = created._id;
       }
 
       // If initial was NEEDS_CORRECTION, call resubmit endpoint; else submit
       if (initialData?.status === 'NEEDS_CORRECTION') {
-        await reportService.resubmitReport(targetId);
+        await resubmitReport(targetId);
         toastSuccess('Report resubmitted for manager review!');
       } else {
-        await reportService.submitReport(targetId);
+        await submitReport(targetId);
         toastSuccess('Report successfully submitted for manager review!');
       }
 

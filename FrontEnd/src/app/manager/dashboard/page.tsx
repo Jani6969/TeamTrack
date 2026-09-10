@@ -2,7 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
-import { dashboardService } from '@/services/dashboardService';
+import {
+  getDashboardSummary,
+  getTaskTrend,
+  getStatusByMember,
+  getWorkloadByProject,
+  getTimeByTaskType,
+  getRecentActivity,
+} from '@/api/dashboard';
 import {
   ActivityItem,
   DashboardSummary,
@@ -55,12 +62,12 @@ export default function ManagerDashboardPage() {
   const loadDashboard = async () => {
     try {
       const [sum, trend, members, work, time, acts] = await Promise.all([
-        dashboardService.getSummary(),
-        dashboardService.getTaskTrend(),
-        dashboardService.getStatusByMember(),
-        dashboardService.getWorkloadByProject(),
-        dashboardService.getTimeByTaskType(),
-        dashboardService.getRecentActivity(),
+        getDashboardSummary(),
+        getTaskTrend(),
+        getStatusByMember(),
+        getWorkloadByProject(),
+        getTimeByTaskType(),
+        getRecentActivity(),
       ]);
 
       setSummary(sum);

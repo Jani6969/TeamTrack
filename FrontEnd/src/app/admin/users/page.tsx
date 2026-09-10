@@ -2,7 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
-import { userService } from '@/services/userService';
+import {
+  getUsers,
+  updateUserRole,
+  deleteUser,
+} from '@/api/users';
 import { User, UserRole } from '@/types';
 import { useAuth } from '@/context/AuthContext';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
@@ -25,7 +29,7 @@ export default function UsersManagementPage() {
 
   const fetchUsers = async () => {
     try {
-      const data = await userService.getUsers();
+      const data = await getUsers();
       setUsers(data || []);
     } catch (err) {
       console.error('Failed to load users:', err);
@@ -41,7 +45,7 @@ export default function UsersManagementPage() {
 
   const handleRoleChange = async (userId: string, newRole: 'TEAM_MEMBER' | 'MANAGER') => {
     try {
-      await userService.updateUserRole(userId, newRole);
+      await updateUserRole(userId, newRole);
       toastSuccess(`Role updated to ${newRole}`);
       fetchUsers();
     } catch (err: any) {
@@ -53,7 +57,7 @@ export default function UsersManagementPage() {
     if (!userToDelete) return;
     setDeleting(true);
     try {
-      await userService.deleteUser(userToDelete._id);
+      await deleteUser(userToDelete._id);
       toastSuccess('User account removed');
       setUserToDelete(null);
       fetchUsers();

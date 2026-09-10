@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
-import { reportService } from '@/services/reportService';
+import { getMyReports } from '@/api/reports';
 import { useToast } from '@/context/ToastContext';
 import { Report } from '@/types';
 import { StatusBadge } from '@/components/ui/StatusBadge';
@@ -52,7 +52,7 @@ export default function MyReportsPage() {
     const fetchReports = async () => {
       setLoading(true);
       try {
-        const data = await reportService.getMyReports({
+        const data = await getMyReports({
           page,
           limit,
           status: statusFilter || undefined,
