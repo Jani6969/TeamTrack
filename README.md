@@ -62,13 +62,10 @@ Because MongoDB Atlas is hosted in the cloud, you do not need to install or run 
 ### 2.2 Configure Backend Environment (`backend/.env`)
 Ensure your `backend/.env` file is configured with the MongoDB Atlas URI:
 ```env
-PORT=5000
-MONGODB_URI=mongodb+srv://janithchamika20030411_db_user:Janith321@cluster0.jwki2ka.mongodb.net/?appName=Cluster0
-JWT_SECRET=teamtrack_secret_jwt_key_development_2026
-JWT_EXPIRES_IN=7d
-CLIENT_URL=http://localhost:3000
-GEMINI_API_KEY=AQ.Ab8RN6JbmjNdz0fF1gzJZisKHH6U4NdU3QycHtnILC18TloNnw
-GEMINI_MODEL=gemini-3.6-flash
+in backend .env file i removed because i got msg in gemini api and mongo db  
+Dear Customer,
+We detected and will delete a publicly exposed a service account bound API key with the following Google Cloud Platform account .....
+We have become aware that active database credentials for your MongoDB Atlas cluster (database username: janithchamika20030411_db_user) are publicly accessible on GitHub at https://github.com/Jani6969/TeamTrack/blob/54a27249a6ae071f7e3f825bc2be36285f864468/README.md. This may have been intentional. However, we would like to ensure that you are fully aware of this potential security concern.
 ```
 
 ### 2.3 Seed the Database
