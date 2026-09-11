@@ -1,0 +1,153 @@
+'use client';
+
+import React, { useMemo } from 'react';
+import { usePathname } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
+import {
+  LayoutDashboard,
+  FileText,
+  PlusCircle,
+  Users,
+  FolderKanban,
+  BarChart3,
+  LogOut,
+  Shield,
+  Activity,
+  Layers,
+} from 'lucide-react';
+import NextLink from 'next/link';
+import Image from 'next/image';
+
+interface SidebarProps {
+  isOpen: boolean;
+  onClose?: () => void;
+}
+
+export function Sidebar({ isOpen, onClose }: SidebarProps) {
+  const pathname = usePathname();
+  const { user, logout, isManager } = useAuth();
+
+  const memberNavItems = useMemo(
+    () => [
+      { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+      { label: 'My Reports', href: '/reports', icon: FileText },
+      { label: 'Create Report', href: '/reports/new', icon: PlusCircle },
+    ],
+    []
+  );
+
+  const managerNavItems = useMemo(
+    () => [
+      { label: 'Overview', href: '/manager/dashboard', icon: BarChart3 },
+      { label: 'Team Reports', href: '/manager/reports', icon: Layers },
+      { label: 'Team Members', href: '/manager/team', icon: Users },
+      { label: 'Projects', href: '/admin/projects', icon: FolderKanban },
+      { label: 'User Directory', href: '/admin/users', icon: Shield },
+    ],
+    []
+  );
+
+  const navItems = isManager ? managerNavItems : memberNavItems;
+
+  // Determine active route: exact match has priority, otherwise longest matching prefix
+  const activeHref = useMemo(() => {
+    const exact = navItems.find((n) => pathname === n.href);
+    if (exact) return exact.href;
+
+    const prefixMatches = navItems
+      .filter((n) => pathname.startsWith(`${n.href}/`))
+      .sort((a, b) => b.href.length - a.href.length);
+
+    return prefixMatches[0]?.href;
+  }, [pathname, navItems]);
+
+  return (
+    <>
+      {/* Mobile backdrop */}
+      {isOpen && (
+        <div
+          onClick={onClose}
+          className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm lg:hidden transition-opacity"
+        />
+      )}
+
+      {/* Sidebar container */}
+      <aside
+        className={`fixed top-0 left-0 z-40 h-screen w-64 bg-slate-900 text-white flex flex-col transition-transform duration-200 ease-in-out lg:translate-x-0 ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        {/* Brand Header */}
+        <div className="h-16 flex items-center gap-3 px-6 border-b border-slate-800">
+          <div className="w-9 h-9 flex items-center justify-center shrink-0">
+            <Image
+              src="/logo-icon.png"
+              alt="TeamTrack Logo"
+              width={36}
+              height={36}
+              className="w-full h-full object-contain drop-shadow-md"
+              priority
+            />
+          </div>
+          <div>
+            <div className="font-extrabold text-base tracking-tight text-white leading-tight">TeamTrack</div>
+            <div className="text-[10px] uppercase font-semibold tracking-wider text-slate-400">Team Analytics</div>
+          </div>
+        </div>
+
+        {/* Navigation list */}
+        <div className="flex-1 overflow-y-auto px-4 py-6 space-y-1">
+          <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 mb-2">
+            {isManager ? 'Management' : 'My Workspace'}
+          </div>
+
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeHref === item.href;
+
+            return (
+              <NextLink
+                key={item.href}
+                href={item.href}
+                onClick={onClose}
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                  isActive
+                    ? 'bg-brand-600 text-white shadow-sm shadow-brand-600/30'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+                }`}
+              >
+                <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                <span>{item.label}</span>
+              </NextLink>
+            );
+          })}
+        </div>
+
+        {/* User Info Footer */}
+        <div className="p-4 border-t border-slate-800 bg-slate-950/40">
+          <div className="flex items-center justify-between mb-3 px-1">
+            <div className="overflow-hidden pr-2">
+              <div className="text-sm font-semibold text-white truncate">{user?.name}</div>
+              <div className="text-xs text-slate-400 truncate">{user?.email}</div>
+            </div>
+            <span
+              className={`px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase shrink-0 ${
+                isManager ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-brand-500/20 text-brand-300 border border-brand-500/30'
+              }`}
+            >
+              {user?.role}
+            </span>
+          </div>
+
+          <button
+            onClick={logout}
+            className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-semibold text-rose-300 hover:text-rose-200 hover:bg-rose-500/10 transition-colors border border-rose-500/20"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </aside>
+    </>
+  );
+}
