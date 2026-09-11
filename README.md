@@ -96,6 +96,7 @@ From the `backend/` directory, start the Express API server:
 ```bash
 cd backend
 npm run dev
+#before run this backend other running backend projects in pc should stop using ctrl+c
 ```
 
 ### Production Mode:
@@ -130,6 +131,7 @@ NEXT_PUBLIC_API_URL=http://localhost:5000/api
 ```bash
 cd FrontEnd
 npm run dev
+#before run this backend other running backend projects in pc should stop using ctrl+c.
 ```
 
 The application will be accessible at:
