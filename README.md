@@ -54,7 +54,7 @@ npm install
 This project is configured to use a cloud-hosted **MongoDB Atlas** cluster database:
 
 ```text
-mongodb+srv://janithchamika20030411_db_user:Janith321@cluster0.jwki2ka.mongodb.net/?appName=Cluster0
+removed
 ```
 
 Because MongoDB Atlas is hosted in the cloud, you do not need to install or run a local MongoDB instance on your machine. Simply make sure your environment has internet connectivity.
