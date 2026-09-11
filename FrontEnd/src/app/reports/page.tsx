@@ -266,15 +266,15 @@ export default function MyReportsPage() {
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm min-w-[880px]">
+              <table className="w-full text-left text-sm min-w-[920px]">
                 <thead className="bg-slate-50/90 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-100">
                   <tr>
-                    <th className="py-3.5 px-6">Week Range</th>
-                    <th className="py-3.5 px-6">Project</th>
-                    <th className="py-3.5 px-6">Status</th>
-                    <th className="py-3.5 px-6">Tasks Logged</th>
-                    <th className="py-3.5 px-6">Submitted / Updated</th>
-                    <th className="py-3.5 px-6 text-right whitespace-nowrap">Actions</th>
+                    <th className="py-3.5 pl-6 pr-4">Week Range</th>
+                    <th className="py-3.5 px-4">Project</th>
+                    <th className="py-3.5 px-4">Status</th>
+                    <th className="py-3.5 px-4">Tasks Logged</th>
+                    <th className="py-3.5 px-4">Submitted / Updated</th>
+                    <th className="py-3.5 pl-4 pr-8 text-right whitespace-nowrap min-w-[170px]">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -284,7 +284,7 @@ export default function MyReportsPage() {
 
                     return (
                       <tr key={rep._id} className="hover:bg-slate-50/80 transition-colors group">
-                        <td className="py-4 px-6 whitespace-nowrap">
+                        <td className="py-4 pl-6 pr-4 whitespace-nowrap">
                           <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center shrink-0 border border-brand-200/60 shadow-2xs">
                               <Calendar className="w-4 h-4" />
@@ -299,26 +299,26 @@ export default function MyReportsPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="py-4 px-6 whitespace-nowrap">
+                        <td className="py-4 px-4 whitespace-nowrap">
                           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-50/90 text-cyan-900 border border-cyan-200/80 text-xs font-semibold shadow-2xs">
                             <FileText className="w-3.5 h-3.5 text-cyan-600 shrink-0" />
                             <span>{projectName}</span>
                           </span>
                         </td>
-                        <td className="py-4 px-6 whitespace-nowrap">
+                        <td className="py-4 px-4 whitespace-nowrap">
                           <StatusBadge status={rep.status} />
                         </td>
-                        <td className="py-4 px-6 whitespace-nowrap text-xs text-slate-600 font-medium">
+                        <td className="py-4 px-4 whitespace-nowrap text-xs text-slate-600 font-medium">
                           <span className="font-bold text-slate-900">{rep.tasks?.length || 0}</span> tasks logged
                         </td>
-                        <td className="py-4 px-6 whitespace-nowrap text-xs text-slate-500 font-medium">
+                        <td className="py-4 px-4 whitespace-nowrap text-xs text-slate-500 font-medium">
                           {formatDate(rep.submittedAt || rep.updatedAt || rep.createdAt)}
                         </td>
-                        <td className="py-3.5 px-6 text-right whitespace-nowrap">
+                        <td className="py-3.5 pl-4 pr-8 text-right whitespace-nowrap min-w-[170px]">
                           <div className="inline-flex items-center justify-end gap-2">
                             <Link
                               href={`/reports/${rep._id}`}
-                              className="h-8 px-3.5 rounded-xl text-xs font-bold inline-flex items-center justify-center whitespace-nowrap bg-white hover:bg-brand-50 text-slate-700 hover:text-brand-700 border border-slate-200 hover:border-brand-200 shadow-2xs transition-all"
+                              className="h-8 px-3.5 rounded-xl text-xs font-bold inline-flex items-center justify-center whitespace-nowrap bg-white hover:bg-brand-50 text-slate-700 hover:text-brand-700 border border-slate-200 hover:border-brand-200 shadow-2xs transition-all shrink-0"
                             >
                               <span>View</span>
                               <ExternalLink className="w-3.5 h-3.5 ml-1.5" />
@@ -327,7 +327,7 @@ export default function MyReportsPage() {
                             {canEdit && (
                               <Link
                                 href={`/reports/${rep._id}/edit`}
-                                className="h-8 px-3.5 rounded-xl text-xs font-bold inline-flex items-center justify-center whitespace-nowrap bg-brand-600 hover:bg-brand-700 text-white shadow-sm shadow-brand-500/20 transition-all hover:scale-105 active:scale-95"
+                                className="h-8 px-3.5 rounded-xl text-xs font-bold inline-flex items-center justify-center whitespace-nowrap bg-brand-600 hover:bg-brand-700 text-white shadow-sm shadow-brand-500/20 transition-all hover:scale-105 active:scale-95 shrink-0"
                               >
                                 {rep.status === 'NEEDS_CORRECTION' ? 'Resubmit' : 'Edit'}
                               </Link>

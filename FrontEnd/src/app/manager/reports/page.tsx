@@ -488,15 +488,15 @@ export default function ManagerReportsPage() {
           ) : (
             <>
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm min-w-[960px]">
+                <table className="w-full text-left text-sm min-w-[1020px]">
                   <thead className="bg-slate-50/90 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-100">
                     <tr>
-                      <th className="py-3.5 px-6">Team Member</th>
-                      <th className="py-3.5 px-6">Week Range</th>
-                      <th className="py-3.5 px-6">Project</th>
-                      <th className="py-3.5 px-6">Status</th>
-                      <th className="py-3.5 px-6">Submitted Date</th>
-                      <th className="py-3.5 px-6 text-right whitespace-nowrap">Actions</th>
+                      <th className="py-3.5 pl-6 pr-4">Team Member</th>
+                      <th className="py-3.5 px-4">Week Range</th>
+                      <th className="py-3.5 px-4">Project</th>
+                      <th className="py-3.5 px-4">Status</th>
+                      <th className="py-3.5 px-4">Submitted Date</th>
+                      <th className="py-3.5 pl-4 pr-8 text-right whitespace-nowrap min-w-[190px]">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -517,7 +517,7 @@ export default function ManagerReportsPage() {
 
                       return (
                         <tr key={rep._id} className="hover:bg-slate-50/80 transition-colors group">
-                          <td className="py-4 px-6 whitespace-nowrap">
+                          <td className="py-4 pl-6 pr-4 whitespace-nowrap">
                             <div className="flex items-center gap-3">
                               <div
                                 className={`w-9 h-9 rounded-full bg-gradient-to-tr ${getAvatarGradient(
@@ -534,7 +534,7 @@ export default function ManagerReportsPage() {
                               </div>
                             </div>
                           </td>
-                          <td className="py-4 px-6 whitespace-nowrap">
+                          <td className="py-4 px-4 whitespace-nowrap">
                             <div className="flex items-center gap-2.5">
                               <div className="w-8 h-8 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center shrink-0 border border-brand-200/60 shadow-2xs">
                                 <Calendar className="w-4 h-4" />
@@ -549,22 +549,22 @@ export default function ManagerReportsPage() {
                               </div>
                             </div>
                           </td>
-                          <td className="py-4 px-6 whitespace-nowrap">
+                          <td className="py-4 px-4 whitespace-nowrap">
                             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-50/90 text-cyan-900 border border-cyan-200/80 text-xs font-semibold shadow-2xs">
                               <FolderKanban className="w-3.5 h-3.5 text-cyan-600 shrink-0" />
                               <span>{projName}</span>
                             </span>
                           </td>
-                          <td className="py-4 px-6 whitespace-nowrap">
+                          <td className="py-4 px-4 whitespace-nowrap">
                             <StatusBadge status={rep.status} />
                           </td>
-                          <td className="py-4 px-6 whitespace-nowrap">
+                          <td className="py-4 px-4 whitespace-nowrap">
                             <div className="text-xs font-bold text-slate-800">
                               {formatDate(rep.submittedAt || rep.createdAt)}
                             </div>
                             <div className="text-[10px] text-slate-400 font-medium">Logged Date</div>
                           </td>
-                          <td className="py-4 px-6 text-right whitespace-nowrap">
+                          <td className="py-4 pl-4 pr-8 text-right whitespace-nowrap min-w-[190px]">
                             <div className="inline-flex items-center justify-end gap-2">
                               <Link
                                 href={`/reports/${rep._id}`}
@@ -576,7 +576,7 @@ export default function ManagerReportsPage() {
 
                               <Link
                                 href={`/manager/reports/${rep._id}/review`}
-                                className={`h-8 px-3.5 rounded-xl text-xs font-bold inline-flex items-center justify-center whitespace-nowrap transition-all shadow-2xs ${
+                                className={`h-8 px-3.5 rounded-xl text-xs font-bold inline-flex items-center justify-center whitespace-nowrap transition-all shadow-2xs shrink-0 ${
                                   rep.status === 'SUBMITTED'
                                     ? 'bg-brand-600 hover:bg-brand-700 text-white shadow-brand-500/20'
                                     : 'bg-white hover:bg-brand-50 text-slate-700 hover:text-brand-700 border border-slate-200 hover:border-brand-200'
@@ -655,16 +655,16 @@ export default function ManagerReportsPage() {
               <table className="w-full text-left text-sm min-w-[700px]">
                 <thead className="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-100">
                   <tr>
-                    <th className="py-3.5 px-6">Team Member</th>
-                    <th className="py-3.5 px-6">Reporting Period</th>
-                    <th className="py-3.5 px-6">Submission Status</th>
-                    <th className="py-3.5 px-6">Action</th>
+                    <th className="py-3.5 pl-6 pr-4">Team Member</th>
+                    <th className="py-3.5 px-4">Reporting Period</th>
+                    <th className="py-3.5 px-4">Submission Status</th>
+                    <th className="py-3.5 pl-4 pr-8 text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-700">
                   {notStartedMembers.map((member) => (
                     <tr key={member._id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="py-4 px-6">
+                      <td className="py-4 pl-6 pr-4">
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center text-xs font-bold shrink-0">
                             {member.name.charAt(0).toUpperCase()}
@@ -675,13 +675,13 @@ export default function ManagerReportsPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="py-4 px-6 text-xs text-slate-600 font-medium">
+                      <td className="py-4 px-4 text-xs text-slate-600 font-medium">
                         {activeWeekDisplay}
                       </td>
-                      <td className="py-4 px-6">
+                      <td className="py-4 px-4">
                         <StatusBadge status="NOT_STARTED" />
                       </td>
-                      <td className="py-4 px-6">
+                      <td className="py-4 pl-4 pr-8 text-right">
                         <button
                           type="button"
                           onClick={() => handleSendReminder(member.name, member.email)}
